@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("TemplateGenerator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Verohallinto")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TemplateGenerator")]
-[assembly: AssemblyCopyright("Copyright © Verohallinto 2011")]
+[assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
