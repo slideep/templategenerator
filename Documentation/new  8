@@ -1,20 +1,16 @@
-@luokka@
-@kuvaus@
-@yksilo@
+@class@
+@description@
+@tablename@
 @selectsql@
 @insertsql@
 @updatesql@
-@surrogaatti@
-@parametrit@
-@ominaisuudet@
+@parameters@
+@properties@
 @sovitusParametri@
-@parametriNimi@
-@surrogaattiArvo@
-@tietotyyppi@
-@tietotyyppiLTK@
+@parametername@
+@datatype@
 
-
-/luokkaPohja/luokka[1]
+/classTemplate/class[1]
 
 propertyDescription/
 propertyDescription[@name='{0}'
