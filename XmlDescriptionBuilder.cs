@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -56,7 +57,7 @@ namespace TemplateGenerator
             }
             if (propertyDescription == null)
             {
-                throw new ArgumentNullException("descriptionType");
+                throw new ArgumentNullException("propertyDescription");
             }
 
             var propertyDescriptions = new Collection<PropertyDescription>();
@@ -70,15 +71,15 @@ namespace TemplateGenerator
                     string elementName = SearchProperty(propertyNode, MetadataParameters.Name);
                     if (elementName != null)
                     {
-                        var propertyDescription = new PropertyDescription(elementName, "", "");
+                        var description = new PropertyDescription(elementName, "", "");
                         
-                        if (propertyDescriptions.Contains(propertyDescription))
+                        if (propertyDescriptions.Contains(description))
                         {
                             throw new InvalidOperationException(
-                                string.Format("XML-description has a duplicate element defined: '{0}'", elementName));
+                                string.Format(CultureInfo.InvariantCulture, "XML-description has a duplicate element defined: '{0}'", elementName));
                         }
 
-                        propertyDescriptions.Add(propertyDescription);
+                        propertyDescriptions.Add(description);
                     }
                 });
 
@@ -96,7 +97,7 @@ namespace TemplateGenerator
             }
 
 			// TODO: fix hardcoded value or provide a better way to get enum's stringified value
-            return SearchProperty(propertyNode, MetadataParameters.Metainformation).Equals(Enum.GetName(typeof (MetadataType), 5));
+            return SearchProperty(propertyNode, MetadataParameters.Metainformation).Equals(Enum.GetName(typeof(MetadataType), 5));
         }
 
         private static string SearchProperty(XElement node, string propertyDescription)
@@ -110,7 +111,7 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("propertyDescription");
             }
 
-            return node.XPathSelectElement(string.Format("propertyDescription[@name='{0}']", propertyDescription)).Attributes("value").First().Value;
+            return node.XPathSelectElement(string.Format(CultureInfo.InvariantCulture, "propertyDescription[@name='{0}']", propertyDescription)).Attributes("value").First().Value;
         }
     }
 }

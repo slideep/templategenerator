@@ -24,7 +24,6 @@ namespace TemplateGenerator
 
                 return _instance;
             }
-            set { _instance = value; }
         }
 
         public IDictionary<string, ITemplate> Templates

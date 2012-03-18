@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -9,14 +10,11 @@ namespace TemplateGenerator
 {
     public class SqlBuilder : ISqlBuilder<IDictionary<string, IDataParameter>, IDataParameter>
     {
-        public const string SqlRivi = "SELECT * FROM {0} WHERE ROWNUM < 1";
+        public const string SqlRow = "SELECT * FROM {0} WHERE ROWNUM < 1";
         public const string SqlSelect = "\"SELECT {0} FROM {1} WHERE {2}\"";
         public const string SqlInsert = "\"INSERT INTO {0} ({1}) VALUES ({2})\"";
         public const string SqlUpdate = "\"UPDATE {0} SET {1} WHERE {2}\"";
 
-        /// <summary>
-        /// Tietokannan nimi
-        /// </summary>
         public string DatabaseName
         {
             get { return ""; }
@@ -75,10 +73,10 @@ namespace TemplateGenerator
                     {
                         parameters.Clear();
                         parameters.Append("USERNAME = :username");
-                        return string.Format(SqlSelect, columnNames, tableName, parameters);
+                        return string.Format(CultureInfo.InvariantCulture, SqlSelect, columnNames, tableName, parameters);
                     }
                 case SqlBuilderOperation.Insert:
-                    return string.Format(SqlInsert, tableName, columnNames, parameters);
+                    return string.Format(CultureInfo.InvariantCulture, SqlInsert, tableName, columnNames, parameters);
                 case SqlBuilderOperation.Update:
                     {
                         const string formatString =
@@ -87,7 +85,7 @@ namespace TemplateGenerator
                         columnNames.Clear();
                         columnNames.Append(string.Join(",", ColumnNames.Select(s => formatString.Replace("@paramName@", s))));
 
-                        return string.Format(SqlUpdate, tableName, columnNames, parameters);
+                        return string.Format(CultureInfo.InvariantCulture, SqlUpdate, tableName, columnNames, parameters);
                     }
             }
 
@@ -101,7 +99,7 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("columns");
             }
 
-            return Array.AsReadOnly<string>(columns.OfType<DataColumn>().ToList().ConvertAll<string>(dc => dc.ColumnName.ToLower()).ToArray());
+            return Array.AsReadOnly<string>(columns.OfType<DataColumn>().ToList().ConvertAll<string>(dc => dc.ColumnName.ToLowerInvariant()).ToArray());
 		}
 		
         private void SetColumnNames(DataColumnCollection columns)
@@ -114,7 +112,7 @@ namespace TemplateGenerator
             ColumnNames = 
                 Array.AsReadOnly<string>(columns.OfType<DataColumn>()
                 .ToList()
-                .ConvertAll<string>(dc => dc.ColumnName.ToLower()).ToArray());
+                .ConvertAll<string>(dc => dc.ColumnName.ToLowerInvariant()).ToArray());
         }
 
         #endregion

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace TemplateGenerator
@@ -7,7 +8,6 @@ namespace TemplateGenerator
     {
         public string ClassTemplate { get; private set; }
         public string PropertyTemplate { get; private set; }
-        public string SurrogateTemplate { get; private set; }
         public string ParameterTemplate { get; private set; }
 
         public ClassGenerator(ITemplate template)
@@ -20,10 +20,9 @@ namespace TemplateGenerator
             GeneratedTemplate = template;
             ClassTemplate = GeneratedTemplate.ClassTemplate;
             PropertyTemplate = GeneratedTemplate.PropertyTemplate;
-            SurrogateTemplate = GeneratedTemplate.SurrogateTemplate;   
             ParameterTemplate = GeneratedTemplate.ParameterTemplate;
             DescriptionType = GeneratedTemplate.DescriptionType;
-            SovitusParametriPohja = GeneratedTemplate.SovitusParametriPohja;
+            SovitusParametriPohja = GeneratedTemplate.SovitusParameterTemplate;
         }
 
         protected string SovitusParametriPohja { get; set; }
@@ -39,34 +38,28 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("description");
             }
 
-            string luokkaPohja = ClassTemplate;
+            string classTemplateString = ClassTemplate;
 
-            luokkaPohja = luokkaPohja.Replace("@class@", description.Name);
-            luokkaPohja = luokkaPohja.Replace("@description@", description.Description);
+            classTemplateString = classTemplateString.Replace("@class@", description.Name);
+            classTemplateString = classTemplateString.Replace("@description@", description.Description);
             
-            var luokkaKuvaus = description as ClassDescription;
-            if (luokkaKuvaus != null)
+            var classDescription = description as ClassDescription;
+            if (classDescription != null)
             {
-                if (luokkaKuvaus.IsDataAccessClass)
+                if (classDescription.IsDataAccessClass)
                 {
-                    luokkaPohja = luokkaPohja.Replace("@tablename@", luokkaKuvaus.TableName);
-                    luokkaPohja = luokkaPohja.Replace("@selectsql@", luokkaKuvaus.BuildSQLSelect);
-                    luokkaPohja = luokkaPohja.Replace("@insertsql@", luokkaKuvaus.BuildSQLInsert);
-                    luokkaPohja = luokkaPohja.Replace("@updatesql@", luokkaKuvaus.BuildSQLUpdate);
-
-                    if (!string.IsNullOrEmpty(description.SurrogateValue))
-                    {
-                        luokkaPohja = luokkaPohja.Replace("@surrogate@", CreateSurrogate(luokkaKuvaus).ToString());
-                    }
-
-                    luokkaPohja = luokkaPohja.Replace("@parameters@", CreateParameters(luokkaKuvaus).ToString());
+                    classTemplateString = classTemplateString.Replace("@tablename@", classDescription.TableName);
+                    classTemplateString = classTemplateString.Replace("@selectsql@", classDescription.BuildSqlSelect);
+                    classTemplateString = classTemplateString.Replace("@insertsql@", classDescription.BuildSqlInsert);
+                    classTemplateString = classTemplateString.Replace("@updatesql@", classDescription.BuildSqlUpdate);
+                    classTemplateString = classTemplateString.Replace("@parameters@", CreateParameters(classDescription).ToString());
                 }
 
-                luokkaPohja = luokkaPohja.Replace("@properties@", CreateProperties(luokkaKuvaus).ToString());
-                luokkaPohja = luokkaPohja.Replace("@sovitusParametri@", LuoSovitusParametrit(luokkaKuvaus).ToString());
+                classTemplateString = classTemplateString.Replace("@properties@", CreateProperties(classDescription).ToString());
+                classTemplateString = classTemplateString.Replace("@sovitusParametri@", LuoSovitusParametrit(classDescription).ToString());
             }
 
-            return luokkaPohja;
+            return classTemplateString;
         }
 
         private StringBuilder LuoSovitusParametrit(ClassDescription description)
@@ -78,11 +71,11 @@ namespace TemplateGenerator
 
             var parameters = new StringBuilder();
 
-            foreach (var parametriNimi in description.Builder.ColumnNames)
+            foreach (var parameterName in description.Builder.ColumnNames)
             {
-                string parametriString = SovitusParametriPohja;
-                parametriString = GetParameterString(description, parametriString, parametriNimi);
-                parameters.Append(parametriString);
+                string parameterString = SovitusParametriPohja;
+                parameterString = GetParameterString(description, parameterString, parameterName);
+                parameters.Append(parameterString);
             }
 
             return parameters;
@@ -97,59 +90,29 @@ namespace TemplateGenerator
 
             var parameters = new StringBuilder();
 
-            foreach (var parametriNimi in description.Builder.ColumnNames)
+            foreach (var parameterName in description.Builder.ColumnNames)
             {
-                string parametriString = ParameterTemplate;
+                string parameterString = ParameterTemplate;
 
                 switch (DescriptionType)
                 {
                     case TemplateDescriptionType.Controller:
                         {
-                            parametriString =
-                                parametriString.Replace("@parametriNimi@",
-                                                        string.Concat(parametriNimi.Substring(0, 1).ToUpper(), parametriNimi.Substring(1, parametriNimi.Length - 1).ToLower()));
-                            parametriString = parametriString.Replace("@class@", description.Name);
+                            parameterString =
+                                parameterString.Replace("@parameterName@",
+                            	                        string.Concat(parameterName.Substring(0, 1).ToUpperInvariant(), parameterName.Substring(1, parameterName.Length - 1).ToLowerInvariant()));
+                            parameterString = parameterString.Replace("@class@", description.Name);
                         }
                         break;
                     default:
-                        parametriString = parametriString.Replace("@parametriNimi@", parametriNimi);
+                        parameterString = parameterString.Replace("@parameterName@", parameterName);
                         break;
                 }
 
-                parameters.Append(parametriString);
+                parameters.Append(parameterString);
             }
 
             return parameters;
-        }
-
-        private StringBuilder CreateSurrogate(ClassDescription description)
-        {
-            if (description == null)
-            {
-                throw new ArgumentNullException("description");
-            }
-
-            var surrogate = new StringBuilder();
-
-            string surrogaattiString = SurrogateTemplate;            
-            surrogaattiString = surrogaattiString.Replace("@tablename@", description.TableName);
-
-            switch (this.DescriptionType)
-            {
-                case TemplateDescriptionType.Controller:
-                    surrogaattiString = surrogaattiString.Replace("@surrogatevalue@",
-                                                      string.Concat(description.SurrogateValue.Substring(0, 1).ToUpper(),
-                                                                    description.SurrogateValue.Substring(1, description.SurrogateValue.Length - 1).ToLower()));
-                    break;
-                default:
-                    surrogaattiString = surrogaattiString.Replace("@surrogatevalue@", description.SurrogateValue);
-                    break;
-            }            
-
-            surrogaattiString = surrogaattiString.Replace("@class@", description.Name);
-            surrogate.Append(surrogaattiString);
-                                    
-            return surrogate;
         }
 
         public StringBuilder CreateProperties(ClassDescription description)
@@ -161,44 +124,43 @@ namespace TemplateGenerator
             
             var properties = new StringBuilder();
 
-            foreach (var ominaisuusKuvaus in description.Properties)
+            foreach (var propertyDescription in description.Properties)
             {
-                string ominaisuusString = PropertyTemplate;
+                string propertyString = PropertyTemplate;
 
-                ominaisuusString = ominaisuusString.Replace("@name@", ominaisuusKuvaus.Name);
-                ominaisuusString = ominaisuusString.Replace("@description@", ominaisuusKuvaus.Description);
-                ominaisuusString = ominaisuusString.Replace("@datatype@", ominaisuusKuvaus.GetNetDatatype());
-                ominaisuusString = ominaisuusString.Replace("@datatypeLTK@", ominaisuusKuvaus.GetNetDatatypeLTK());
-
-                properties.Append(ominaisuusString);
+                propertyString = propertyString.Replace("@name@", propertyDescription.Name);
+                propertyString = propertyString.Replace("@description@", propertyDescription.Description);
+                propertyString = propertyString.Replace("@datatype@", propertyDescription.DotNetDataType);
+           
+                properties.Append(propertyString);
             }
 
             return properties;
         }
 
-        #region Staattiset apujäsenet
+        #region Static members
 
-        private static string GetParameterString(ClassDescription description, string parametriString, string parametriNimi)
+        private static string GetParameterString(ClassDescription description, string parameterString, string parametriNimi)
         {
             if (description == null)
             {
                 throw new ArgumentNullException("description");
             }
 
-            parametriString =
-                parametriString.Replace("@sovitusParametri1@",
+            parameterString =
+                parameterString.Replace("@sovitusParametri1@",
                                         string.Concat(
-                                            parametriNimi.Substring(0, 1).ToUpper(), 
-                                            parametriNimi.Substring(1, parametriNimi.Length - 1).ToLower()));
-            parametriString =
-                parametriString.Replace("@sovitusParametri2@",
+            	                        	parametriNimi.Substring(0, 1).ToUpperInvariant(),
+            	                        	parametriNimi.Substring(1, parametriNimi.Length - 1).ToLowerInvariant()));
+            parameterString =
+                parameterString.Replace("@sovitusParametri2@",
                                         string.Concat(
-                                            parametriNimi.Substring(0, 1).ToUpper(), 
-                                            parametriNimi.Substring(1, parametriNimi.Length - 1).ToLower()));
+                                            parametriNimi.Substring(0, 1).ToUpperInvariant(), 
+                                            parametriNimi.Substring(1, parametriNimi.Length - 1).ToLowerInvariant()));
 											
-            parametriString = parametriString.Replace("@class@", description.Name);
+            parameterString = parameterString.Replace("@class@", description.Name);
 
-            return parametriString;
+            return parameterString;
         }
 
         #endregion

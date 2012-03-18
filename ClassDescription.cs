@@ -30,22 +30,23 @@ namespace TemplateGenerator
 
         public bool IsDataAccessClass { get; set; }
 
-        public string BuildSQLSelect
+        public string BuildSqlSelect
         {
             get { return Builder.BuildSql(TableName, SqlBuilderOperation.Select); }
         }
 
-        public string BuildSQLUpdate
+        public string BuildSqlUpdate
         {
             get { return Builder.BuildSql(TableName, SqlBuilderOperation.Update); }
         }
 
-        public string BuildSQLInsert
+        public string BuildSqlInsert
         {
             get { return Builder.BuildSql(TableName, SqlBuilderOperation.Insert); }
         }
 
-        public ReadOnlyCollection<OperationDescription> Operations { get; set; }
+        public ReadOnlyCollection<OperationDescription> Operations { get; private set; }
+        
         public SqlBuilder Builder { get; private set; }
 
         #region IDescription Members
@@ -56,12 +57,10 @@ namespace TemplateGenerator
 
         public string Description { get; set; }
 
-        public ReadOnlyCollection<PropertyDescription> Properties { get; set; }
-
         public string FileFullPath { get; set; }
 
-        public string SurrogateValue { get; set; }
-
         #endregion
+    	
+		public ReadOnlyCollection<PropertyDescription> Properties { get; private set; }
     }
 }

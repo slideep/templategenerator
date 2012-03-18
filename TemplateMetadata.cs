@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -63,12 +64,12 @@ namespace TemplateGenerator
 
         public string EventType
         {
-            get { return SearchProperty(Node, MetadataParameters.Tapahtumalaji); }
+            get { return SearchProperty(Node, MetadataParameters.EventType); }
         }
 
         public string Namespace
         {
-            get { return SearchProperty(Node, MetadataParameters.Nimiavaruus); }
+            get { return SearchProperty(Node, MetadataParameters.Namespace); }
         }
 
         public string Visibility
@@ -83,12 +84,12 @@ namespace TemplateGenerator
 
         public static MetadataType GetMetadataType(string metadataType)
         {
-            return (MetadataType)Enum.Parse(typeof (MetadataType), metadataType, true);
+            return (MetadataType)Enum.Parse(typeof(MetadataType), metadataType, true);
         }
 
         public static TemplateDescriptionType GetClassDescriptionType(string luokkakuvausTyyppi)
         {
-            return (TemplateDescriptionType)Enum.Parse(typeof (TemplateDescriptionType), luokkakuvausTyyppi, true);
+            return (TemplateDescriptionType)Enum.Parse(typeof(TemplateDescriptionType), luokkakuvausTyyppi, true);
         }
 
         private static string SearchProperty(XElement node, string property)
@@ -102,7 +103,7 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("property");
             }
 
-            return node.XPathSelectElement(string.Format("property[@name='{0}']", property)).Attributes("value").First().Value;
+            return node.XPathSelectElement(string.Format(CultureInfo.InvariantCulture, "property[@name='{0}']", property)).Attributes("value").First().Value;
         }
     }
 }

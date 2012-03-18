@@ -8,7 +8,7 @@ namespace TemplateGenerator
         public IDictionary<string, Type> Parameters { get; private set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ReturnDatatype { get; set; }
+        public string ReturnDataType { get; set; }
         public string Visibility { get; set; }
 
         public OperationDescription(string name, string description, string returnType, IDictionary<string, Type> parameters)
@@ -20,13 +20,15 @@ namespace TemplateGenerator
 
             Name = name;
             Description = description;
-            ReturnDatatype = returnType;
+            ReturnDataType = returnType;
             Parameters = parameters;
         }
 
-        public string GetNetDatatype()
+        public string DotNetDataType
         {
-            switch (ReturnDatatype)
+        	get
+        	{
+            switch (ReturnDataType)
             {
                 case "void":
                     return "void";
@@ -55,8 +57,9 @@ namespace TemplateGenerator
                 case "Boolean":
                     return "bool";
                 default:
-                    return ReturnDatatype;
+                    return ReturnDataType;
             }
+        	}
         }
     }
 }

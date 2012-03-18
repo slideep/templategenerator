@@ -1,10 +1,11 @@
 using System;
+using System.Globalization;
 
 namespace TemplateGenerator
 {
     public class PropertyDescription
     {
-        public PropertyDescription(string name, string description, string datatype)
+        public PropertyDescription(string name, string description, string dataType)
         {
             if (name == null)
             {
@@ -13,14 +14,14 @@ namespace TemplateGenerator
 
             Name = name;
             Description = description;
-            Datatype = datatype;
+            DataType = dataType;
         }
 
         public string Name { get; set; }
 
         public string Description { get; set; }
 
-        public string Datatype { get; set; }
+        public string DataType { get; set; }
 
         protected dynamic DefaultValue { get; set; }
 
@@ -31,40 +32,42 @@ namespace TemplateGenerator
                 return;
             }
 
-            switch (GetNetDatatype())
+            switch (DotNetDataType)
             {
                 case "long":
-                    DefaultValue = Convert.ToInt64(defaultValue);
+                    DefaultValue = Convert.ToInt64(defaultValue, CultureInfo.InvariantCulture);
                     break;
                 case "Double":
-                    DefaultValue = Convert.ToDouble(defaultValue);
+                    DefaultValue = Convert.ToDouble(defaultValue, CultureInfo.InvariantCulture);
                     break;
                 case "decimal":                    
                 case "Decimal":
-                    DefaultValue = Convert.ToDecimal(defaultValue);
+                    DefaultValue = Convert.ToDecimal(defaultValue, CultureInfo.InvariantCulture);
                     break;
                 case "Integer":
                 case "int":
-                    DefaultValue = Convert.ToInt32(defaultValue);
+                    DefaultValue = Convert.ToInt32(defaultValue, CultureInfo.InvariantCulture);
                     break;
                 case "String":
                 case "string":
-                    DefaultValue = Convert.ToString(defaultValue);
+                    DefaultValue = Convert.ToString(defaultValue, CultureInfo.InvariantCulture);
                     break;
                 case "Date":
                 case "DateTime":
-                    DefaultValue = Convert.ToDateTime(defaultValue);
+                    DefaultValue = Convert.ToDateTime(defaultValue, CultureInfo.InvariantCulture);
                     break;
                 case "bool":
                 case "Boolean":
-                    DefaultValue = Convert.ToBoolean(defaultValue);
+                    DefaultValue = Convert.ToBoolean(defaultValue, CultureInfo.InvariantCulture);
                     break;
             }
         }
 
-        public string GetNetDatatype()
+        public string DotNetDataType
         {
-            switch (Datatype)
+        	get
+        	{
+            switch (DataType)
             {
                 case "long":
                     return "long";
@@ -91,43 +94,10 @@ namespace TemplateGenerator
                 case "Boolean":
                     return "bool";
                 default:
-                    return Datatype;
+                    return DataType;
             }
+        	}
         }
 
-        public string GetNetDatatypeLTK()
-        {
-            switch (Datatype)
-            {
-                case "long":
-                    return "Long";
-                case "Long":
-                    return "Long";
-                case "Double":
-                    return "Decimal";
-                case "decimal":
-                    return "Decimal";
-                case "Decimal":
-                    return "Decimal";
-                case "Integer":
-                    return "Int32";
-                case "int":
-                    return "Int32";
-                case "String":
-                    return "String";
-                case "string":
-                    return "String";
-                case "Date":
-                    return "DateTime";
-                case "DateTime":
-                    return "DateTime";
-                case "bool":
-                    return "Bool";
-                case "Boolean":
-                    return "Bool";
-                default:
-                    return Datatype;
-            }
-        }
     }
 }

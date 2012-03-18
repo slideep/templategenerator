@@ -8,7 +8,6 @@ namespace TemplateGenerator
         string Name { get; set; }
         string Description { get; set; }
         string FileFullPath { get; set; }
-        string SurrogateValue { get; set; }
         ReadOnlyCollection<PropertyDescription> Properties { get; }
     }
 }

@@ -24,24 +24,20 @@ namespace TemplateGenerator
             if (SearchProperty(classNode, MetadataParameters.Metainformation).Equals("Class", StringComparison.Ordinal))
             {
                 var classType =
-                    (TemplateDescriptionType)Enum.Parse(typeof (TemplateDescriptionType), SearchProperty(classNode, MetadataParameters.ClassType), true);
+                    (TemplateDescriptionType)Enum.Parse(typeof(TemplateDescriptionType), SearchProperty(classNode, MetadataParameters.ClassType), true);
 
                 string className = SearchProperty(classNode, MetadataParameters.Name);
                 string classDescription = SearchProperty(classNode, MetadataParameters.Description);
                 string tableName = SearchProperty(classNode, MetadataParameters.TableName);
-                string surrogateValue = SearchProperty(classNode, MetadataParameters.Surrogate);
-                string yearValue = SearchProperty(classNode, MetadataParameters.Year);
-
+            
                 if (classNode != null)
                 {
                     var propertyDescriptions = FetchProperties(classNode, XmlDescriptionBuilder.PropertyDescriptionElement);
 
                     return new ClassDescription(className, classDescription, propertyDescriptions)
                            {
-                               Year = string.IsNullOrWhiteSpace(yearValue) ? Convert.ToInt32(yearValue) : (int?)null,
                                IsDataAccessClass = classType == TemplateDescriptionType.DataAccess,
                                TableName = tableName,
-                               SurrogateValue = surrogateValue
                            };
                 }
             }
@@ -49,20 +45,20 @@ namespace TemplateGenerator
             return null;
         }
 
-        protected override IEnumerable<PropertyDescription> FetchProperties(XmlNode classNode, string descriptionType)
+        protected override IEnumerable<PropertyDescription> FetchProperties(XmlNode templateNode, string propertyDescription)
         {
-            if (classNode == null)
+            if (templateNode == null)
             {
-                throw new ArgumentNullException("classNode");
+                throw new ArgumentNullException("templateNode");
             }
-            if (descriptionType == null)
+            if (propertyDescription == null)
             {
-                throw new ArgumentNullException("descriptionType");
+                throw new ArgumentNullException("propertyDescription");
             }
 
             var propertyDescriptions = new Collection<PropertyDescription>();
 
-            var propertyNodes = classNode.SelectNodes(descriptionType);            
+            var propertyNodes = templateNode.SelectNodes(propertyDescription);            
             if (propertyNodes != null && propertyNodes.Count > 0)
             {
                 foreach (XmlNode propertyNode in propertyNodes)
@@ -107,7 +103,7 @@ namespace TemplateGenerator
             if (propertyDescriptions.Contains(property))
             {
                 throw new InvalidOperationException(
-                    string.Format(": '{0}'", propertyName));
+                    string.Format(CultureInfo.InvariantCulture, ": '{0}'", propertyName));
             }
 
             propertyDescriptions.Add(property);

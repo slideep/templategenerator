@@ -8,6 +8,6 @@ namespace TemplateGenerator
         string PropertyTemplate { get; }
         string SurrogateTemplate { get; }
         string ParameterTemplate { get; }
-        string SovitusParametriPohja { get; }
+        string SovitusParameterTemplate { get; }
     }
 }
