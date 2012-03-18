@@ -73,15 +73,10 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -89,8 +84,6 @@
     <Compile Include="GeneratorParameters.cs" />
     <Compile Include="IDescription.cs" />
     <Compile Include="IGenerator.cs" />
-    <Compile Include="Controls\TekstiEditori.cs" />
-    <Compile Include="Controls\XmlTekstiEditori.cs" />
     <Compile Include="DescriptionBuilderBase.cs" />
     <Compile Include="TemplateDescriptionType.cs" />
     <Compile Include="ITemplate.cs" />
@@ -103,31 +96,12 @@
     <Compile Include="MetadataParameters.cs" />
     <Compile Include="MetadataType.cs" />
     <Compile Include="PropertyDescription.cs" />
-    <Compile Include="GeneratorView.cs" />
-    <Compile Include="GeneratorView.Designer.cs">
-      <DependentUpon>GeneratorView.cs</DependentUpon>
-    </Compile>
     <Compile Include="OperationDescription.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlBuilder.cs" />
     <Compile Include="SqlBuilderOperation.cs" />
     <Compile Include="XmlDescription.cs" />
     <Compile Include="XmlDescriptionBuilder.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GeneratorView.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>GeneratorView.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="App.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -159,18 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\browse.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Move.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\NewReportHS.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TemplateGenerator.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
