@@ -7,14 +7,6 @@ namespace TemplateGenerator
 {
     public class XmlDescription : IDescription
     {
-        public string EventType
-        {
-            get;
-            set;
-        }
-
-        public string Namespace { get; set; }
-
         public XmlDescription(string xmlName, string xmlDescription, IEnumerable<PropertyDescription> properties)
         {
             if (xmlName == null)
@@ -37,6 +29,10 @@ namespace TemplateGenerator
 
         #region Implementation of IDescription
 
+        public string SurrogateValue { get; set; }
+
+        public int? Year { get; set; }
+
         public string TableName { get; set; }
 
         public string Name { get; set; }
@@ -45,12 +41,12 @@ namespace TemplateGenerator
 
         public string FileFullPath { get; set; }
 
-        public string SurrogateValue { get; set; }
-
-        public int? Year { get; set; }
-
         public ReadOnlyCollection<PropertyDescription> Properties { get; private set; }
 
         #endregion
+
+        public string EventType { get; set; }
+
+        public string Namespace { get; set; }
     }
 }

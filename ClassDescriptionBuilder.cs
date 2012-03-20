@@ -19,24 +19,24 @@ namespace TemplateGenerator
             var xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(xml);
 
-            var classNode = xmlDocument.SelectSingleNode("/luokkaPohja/luokka[1]");
+            var classNode = xmlDocument.SelectSingleNode("/classTemplate/class[1]");
 
-            if (SearchProperty(classNode, MetadataParameters.Metainformation).Equals("Class", StringComparison.Ordinal))
+            if (SearchProperty(classNode, MetadataParameters.MetaInformation).Equals("Class", StringComparison.Ordinal))
             {
                 var classType =
-                    (TemplateDescriptionType)Enum.Parse(typeof(TemplateDescriptionType), SearchProperty(classNode, MetadataParameters.ClassType), true);
+                    (TemplateDescriptionTypes)Enum.Parse(typeof(TemplateDescriptionTypes), SearchProperty(classNode, MetadataParameters.ClassType), true);
 
-                string className = SearchProperty(classNode, MetadataParameters.Name);
-                string classDescription = SearchProperty(classNode, MetadataParameters.Description);
-                string tableName = SearchProperty(classNode, MetadataParameters.TableName);
+                var className = SearchProperty(classNode, MetadataParameters.Name);
+                var classDescription = SearchProperty(classNode, MetadataParameters.Description);
+                var tableName = SearchProperty(classNode, MetadataParameters.TableName);
             
                 if (classNode != null)
                 {
                     var propertyDescriptions = FetchProperties(classNode, XmlDescriptionBuilder.PropertyDescriptionElement);
 
-                    return new ClassDescription(className, classDescription, propertyDescriptions)
+                    return new ClassDescription(className, classDescription, propertyDescriptions, Enumerable.Empty<OperationDescription>().ToList().AsReadOnly())
                            {
-                               IsDataAccessClass = classType == TemplateDescriptionType.DataAccess,
+                               IsDataAccessClass = classType == TemplateDescriptionTypes.DataAccess,
                                TableName = tableName,
                            };
                 }
@@ -67,7 +67,7 @@ namespace TemplateGenerator
                         SearchProperty(propertyNode, MetadataParameters.Visibility)
                         .Equals(MetadataParameters.Public, StringComparison.Ordinal);
                     var hasAttribute =
-                        SearchProperty(propertyNode, MetadataParameters.Metainformation)
+                        SearchProperty(propertyNode, MetadataParameters.MetaInformation)
                         .Equals(MetadataParameters.Attribute, StringComparison.Ordinal);
                     if (isPublic && hasAttribute)
                     {
@@ -92,10 +92,10 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("propertyNode");
             }
 
-            string propertyName = SearchProperty(propertyNode, MetadataParameters.Name);
-            string propertyDescription = SearchProperty(propertyNode, MetadataParameters.Description);
-            string propertyType = SearchProperty(propertyNode, MetadataParameters.DataType);
-            string propertyDefaultValue = SearchProperty(propertyNode, MetadataParameters.DefaultValue);
+            var propertyName = SearchProperty(propertyNode, MetadataParameters.Name);
+            var propertyDescription = SearchProperty(propertyNode, MetadataParameters.Description);
+            var propertyType = SearchProperty(propertyNode, MetadataParameters.DataType);
+            var propertyDefaultValue = SearchProperty(propertyNode, MetadataParameters.DefaultValue);
 
             var property = new PropertyDescription(propertyName, propertyDescription, propertyType);
             property.SetDefaultValue(propertyDefaultValue);
@@ -122,7 +122,7 @@ namespace TemplateGenerator
 
             try
             {
-                XmlNode childNode =
+                var childNode =
                     node.SelectSingleNode(string.Format(CultureInfo.InvariantCulture, "property[@name='{0}']", property));
 
                 if (childNode == null)
@@ -132,14 +132,9 @@ namespace TemplateGenerator
 
                 if (childNode.Attributes != null)
                 {
-                    XmlAttribute attribute = childNode.Attributes["value"];
+                    var attribute = childNode.Attributes["value"];
 
-                    if (attribute == null)
-                    {
-                        return null;
-                    }
-
-                    return attribute.Value;
+                    return attribute == null ? null : attribute.Value;
                 }
             }
             catch (Exception ex)

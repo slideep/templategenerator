@@ -3,7 +3,7 @@
 namespace TemplateGenerator
 {
 	[Flags]
-    public enum SqlBuilderOperation
+    public enum SqlBuilderOperationTypes
     {
         Select = 1,
         Insert = 2,

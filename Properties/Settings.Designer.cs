@@ -23,15 +23,6 @@ namespace TemplateGenerator.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\tmp\\luokkapohjat")]
-        public string LuokkapohjaHakemisto {
-            get {
-                return ((string)(this["LuokkapohjaHakemisto"]));
-            }
-        }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C:\\tmp\\luokkapohjat")]

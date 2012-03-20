@@ -9,11 +9,11 @@ namespace TemplateGenerator
         private IDictionary<string, IDescription> _descriptions;
 
         public IList<IDescription> Descriptions
-        { 
-            get { return new List<IDescription>(TemplateNamesDescriptions.Values); }
+        {
+            get { lock (TemplateNamesDescriptions) { return new List<IDescription>(TemplateNamesDescriptions.Values);} }
         }
 
-        public IList<ITemplate> Templates
+        public static IList<ITemplate> Templates
         {
             get { return new List<ITemplate>(TemplateStorage.Instance.Templates.Values); }
         }
@@ -24,23 +24,23 @@ namespace TemplateGenerator
             {
                 if (_descriptions == null)
                 {
-                    var buildDescriptions = new List<IDictionary<string, IDescription>> 
-                    { 
-                        new ClassDescriptionBuilder().BuildTemplates(),
-                        new XmlDescriptionBuilder().BuildTemplates()
-                    };
+                    var buildDescriptions = new List<IDictionary<string, IDescription>>
+                                                {
+                                                    new ClassDescriptionBuilder().BuildTemplates(),
+                                                    new XmlDescriptionBuilder().BuildTemplates()
+                                                };
 
                     _descriptions =
                         buildDescriptions
-                        .SelectMany(descriptions => descriptions)
-                        .ToDictionary(descriptionPair => descriptionPair.Key, pair => pair.Value); 
+                            .SelectMany(descriptions => descriptions)
+                            .ToDictionary(descriptionPair => descriptionPair.Key, pair => pair.Value);
                 }
-              
+
                 return _descriptions;
             }
         }
 
-        public string GenerateDescription(IDescription description, string templateName)
+        public static string GenerateDescription(IDescription description, string templateName)
         {
             if (description == null)
             {
@@ -54,16 +54,14 @@ namespace TemplateGenerator
             ITemplate template;
             if (TemplateStorage.Instance.Templates.TryGetValue(templateName, out template))
             {
-                switch (template.DescriptionType)
+                switch (template.DescriptionTypes)
                 {
-                    case TemplateDescriptionType.DataAccess:
-                    case TemplateDescriptionType.BusinessEntity:
-                    case TemplateDescriptionType.Controller:
-                    case TemplateDescriptionType.ControllerInterface:
-                    case TemplateDescriptionType.ConstantClass:
+                    case TemplateDescriptionTypes.DataAccess:
+                    case TemplateDescriptionTypes.BusinessEntity:
+                    case TemplateDescriptionTypes.Controller:
+                    case TemplateDescriptionTypes.ControllerInterface:
+                    case TemplateDescriptionTypes.ConstantClass:
                         return new ClassGenerator(template).Generate(description);
-                    default:
-                        break;
                 }
             }
 

@@ -24,22 +24,22 @@ namespace TemplateGenerator
 
             using (var reader = new StringReader(xml))
             {
-                var xmlDocument = XDocument.Load(reader);
+                XDocument xmlDocument = XDocument.Load(reader);
 
                 if (xmlDocument.Root != null)
                 {
                     var meta = new TemplateMetadata(xmlDocument);
 
-                    if (meta.MetadataType == MetadataType.Xml)
+                    if (meta.MetadataTypes == MetadataTypes.Xml)
                     {
-                        return new XmlDescription(meta.Name, meta.Description, 
-                            FetchProperties(meta.Node, PropertyDescriptionElement))
-                               {
-                                   TableName = meta.TableName,
-                                   SurrogateValue = meta.Surrogate,
-                                   EventType = meta.EventType,
-                                   Namespace = meta.Namespace
-                               };
+                        return new XmlDescription(meta.Name, meta.Description,
+                                                  FetchProperties(meta.Node, PropertyDescriptionElement))
+                                   {
+                                       TableName = meta.TableName,
+                                       SurrogateValue = meta.Surrogate,
+                                       EventType = meta.EventType,
+                                       Namespace = meta.Namespace
+                                   };
                     }
                 }
             }
@@ -49,7 +49,8 @@ namespace TemplateGenerator
 
         #endregion
 
-        protected override IEnumerable<PropertyDescription> FetchProperties(XElement templateNode, string propertyDescription)
+        protected override IEnumerable<PropertyDescription> FetchProperties(XElement templateNode,
+                                                                            string propertyDescription)
         {
             if (templateNode == null)
             {
@@ -62,26 +63,35 @@ namespace TemplateGenerator
 
             var propertyDescriptions = new Collection<PropertyDescription>();
 
-            var propertyNodes = templateNode.XPathSelectElements(propertyDescription);
+            IEnumerable<XElement> propertyNodes = templateNode.XPathSelectElements(propertyDescription);
 
-            if (propertyNodes.Count() > 0)
+            if (propertyNodes.Any())
             {
-                propertyNodes.TakeWhile(e => HasElement(e)).ToList().ForEach(propertyNode =>
-                {
-                    string elementName = SearchProperty(propertyNode, MetadataParameters.Name);
-                    if (elementName != null)
-                    {
-                        var description = new PropertyDescription(elementName, "", "");
-                        
-                        if (propertyDescriptions.Contains(description))
-                        {
-                            throw new InvalidOperationException(
-                                string.Format(CultureInfo.InvariantCulture, "XML-description has a duplicate element defined: '{0}'", elementName));
-                        }
+                propertyNodes.TakeWhile(HasElement).ToList().ForEach(propertyNode =>
+                                                                         {
+                                                                             string elementName =
+                                                                                 SearchProperty(propertyNode,
+                                                                                                MetadataParameters.Name);
 
-                        propertyDescriptions.Add(description);
-                    }
-                });
+                                                                             if (elementName == null) return;
+
+                                                                             var description =
+                                                                                 new PropertyDescription(elementName, string.Empty,
+                                                                                                         string.Empty);
+
+                                                                             if (
+                                                                                 propertyDescriptions.Contains(
+                                                                                     description))
+                                                                             {
+                                                                                 throw new InvalidOperationException(
+                                                                                     string.Format(
+                                                                                         CultureInfo.InvariantCulture,
+                                                                                         "XML-description has a duplicate element defined: '{0}'",
+                                                                                         elementName));
+                                                                             }
+
+                                                                             propertyDescriptions.Add(description);
+                                                                         });
 
                 return propertyDescriptions;
             }
@@ -96,11 +106,13 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("propertyNode");
             }
 
-			// TODO: fix hardcoded value or provide a better way to get enum's stringified value
-            return SearchProperty(propertyNode, MetadataParameters.Metainformation).Equals(Enum.GetName(typeof(MetadataType), 5));
+            // TODO: fix hardcoded value or provide a better way to get enum's stringified value
+            return
+                SearchProperty(propertyNode, MetadataParameters.MetaInformation).Equals(
+                    Enum.GetName(typeof (MetadataTypes), 5));
         }
 
-        private static string SearchProperty(XElement node, string propertyDescription)
+        private static string SearchProperty(XNode node, string propertyDescription)
         {
             if (node == null)
             {
@@ -111,7 +123,9 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("propertyDescription");
             }
 
-            return node.XPathSelectElement(string.Format(CultureInfo.InvariantCulture, "propertyDescription[@name='{0}']", propertyDescription)).Attributes("value").First().Value;
+            return
+                node.XPathSelectElement(string.Format(CultureInfo.InvariantCulture, "propertyDescription[@name='{0}']",
+                                                      propertyDescription)).Attributes("value").First().Value;
         }
     }
 }

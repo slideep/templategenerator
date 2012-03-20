@@ -85,6 +85,7 @@
       <HintPath>packages\mongocsharpdriver.1.3.1\lib\net35\MongoDB.Driver.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Json">
       <HintPath>packages\System.Json.4.0.20126.16343\lib\net40\System.Json.dll</HintPath>
@@ -101,6 +102,7 @@
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http">
       <HintPath>packages\AspNetWebApi.Core.4.0.20126.16343\lib\net40\System.Web.Http.dll</HintPath>
     </Reference>
@@ -115,10 +117,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GeneratorParameters.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IDescription.cs" />
     <Compile Include="IGenerator.cs" />
     <Compile Include="DescriptionBuilderBase.cs" />
-    <Compile Include="TemplateDescriptionType.cs" />
+    <Compile Include="TemplateDescriptionTypes.cs" />
     <Compile Include="ITemplate.cs" />
     <Compile Include="ISqlBuilder.cs" />
     <Compile Include="ClassGenerator.cs" />
@@ -127,12 +130,12 @@
     <Compile Include="TemplateStorage.cs" />
     <Compile Include="TemplateMetadata.cs" />
     <Compile Include="MetadataParameters.cs" />
-    <Compile Include="MetadataType.cs" />
+    <Compile Include="MetadataTypes.cs" />
     <Compile Include="PropertyDescription.cs" />
     <Compile Include="OperationDescription.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlBuilder.cs" />
-    <Compile Include="SqlBuilderOperation.cs" />
+    <Compile Include="SqlBuilderOperationTypes.cs" />
     <Compile Include="XmlDescription.cs" />
     <Compile Include="XmlDescriptionBuilder.cs" />
     <None Include="App.config" />

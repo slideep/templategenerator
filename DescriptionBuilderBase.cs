@@ -7,13 +7,15 @@ using TemplateGenerator.Properties;
 
 namespace TemplateGenerator
 {
-	/// <summary>
-	/// A base class for creating template builders of given <typeparam name="TNodeType"/> type.
-	/// Deriving class has to implement 
-	/// </summary>
+    /// <summary>
+    /// A base class for creating template builders of given <typeparam name="TNodeType"/> type.
+    /// Deriving class has to implement 
+    /// </summary>
+    /// <typeparam name="TNodeType">Node type</typeparam>
     public abstract class DescriptionBuilderBase<TNodeType>
     {
-        private const string Extension = ".genClass";
+
+        public const string Extension = ".genClass";
 
         /// <summary>
         /// Build all available templates from the given default class template directory.
@@ -25,24 +27,26 @@ namespace TemplateGenerator
             {
                 var classDescriptions = new Dictionary<string, IDescription>();
 
-                string templateDirectory = Settings.Default.ClassTemplateDirectory;			
+                string templateDirectory = Settings.Default.ClassTemplateDirectory;
                 if (templateDirectory != null && Directory.Exists(templateDirectory))
                 {
                     string queryCondition = string.Format(CultureInfo.InvariantCulture, "*{0}", Extension);
-                    
-                    Directory.EnumerateFiles(templateDirectory, queryCondition, SearchOption.AllDirectories).AsParallel().ToList().ForEach(fileName =>
-                    {
-                        string xml = File.ReadAllText(fileName);
-                        if (!string.IsNullOrWhiteSpace(xml))
-                        {
-                            var description = BuildDescription(xml);
-                            if (description != null)
-                            {
-                                description.FileFullPath = fileName;
-                                classDescriptions.Add(description.Name, description);
-                            }
-                        }
-                    });
+
+                    Directory.EnumerateFiles(templateDirectory, queryCondition, SearchOption.AllDirectories).AsParallel()
+                        .ToList().ForEach(fileName =>
+                                              {
+                                                  string xml = File.ReadAllText(fileName);
+                                                  if (string.IsNullOrWhiteSpace(xml))
+                                                      return;
+
+                                                  IDescription description = BuildDescription(xml);
+                                                  if (description == null)
+                                                      return;
+
+                                                  description.FileFullPath = fileName;
+
+                                                  classDescriptions.Add(description.Name, description);
+                                              });
                 }
 
                 return classDescriptions;
@@ -54,12 +58,20 @@ namespace TemplateGenerator
         }
 
         /// <summary>
-        /// 
+        /// Builds <see cref="IDescription"/> based on input XML-string.
         /// </summary>
-        /// <param name="xml"></param>
-        /// <returns></returns>
+        /// <param name="xml">XML-string</param>
+        /// <returns>IDescription</returns>
         protected abstract IDescription BuildDescription(string xml);
 
-        protected abstract IEnumerable<PropertyDescription> FetchProperties(TNodeType templateNode, string propertyDescription);
+        /// <summary>
+        /// Fetch enumerable over <see cref="PropertyDescription"/> types.
+        /// </summary>
+        /// <param name="templateNode">Node type</param>
+        /// <param name="propertyDescription">Property description</param>
+        /// <typeparam name="TNodeType">Node type</typeparam>
+        /// <returns>IEnumerable{PropertyDescription}</returns>
+        protected abstract IEnumerable<PropertyDescription> FetchProperties(TNodeType templateNode,
+                                                                            string propertyDescription);
     }
 }

@@ -16,20 +16,20 @@ namespace TemplateGenerator
             }
             if (xmlDoc.Root != null)
             {
-                Node = xmlDoc.Root.XPathSelectElement("/luokkaPohja/luokka[1]");
+                Node = xmlDoc.Root.XPathSelectElement("/classTemplate/class[1]");
             }
         }
 
         public XElement Node { get; set; }
 
-        public MetadataType MetadataType
+        public MetadataTypes MetadataTypes
         {
             get { return GetMetadataType(MetadataTypeString); }
         }
 
         private string MetadataTypeString
         {
-            get { return SearchProperty(Node, MetadataParameters.Metainformation); }
+            get { return SearchProperty(Node, MetadataParameters.MetaInformation); }
         }
 
         public string Name
@@ -42,7 +42,7 @@ namespace TemplateGenerator
             get { return SearchProperty(Node, MetadataParameters.Description); }
         }
 
-        public TemplateDescriptionType ClassType
+        public TemplateDescriptionTypes ClassTypes
         {
             get { return GetClassDescriptionType(ClassTypeString); }
         }
@@ -76,23 +76,23 @@ namespace TemplateGenerator
         {
             get { return SearchProperty(Node, MetadataParameters.Visibility); }
         }
-        
+
         public string DefaultValue
         {
             get { return SearchProperty(Node, MetadataParameters.DefaultValue); }
         }
 
-        public static MetadataType GetMetadataType(string metadataType)
+        public static MetadataTypes GetMetadataType(string metadataType)
         {
-            return (MetadataType)Enum.Parse(typeof(MetadataType), metadataType, true);
+            return (MetadataTypes) Enum.Parse(typeof (MetadataTypes), metadataType, true);
         }
 
-        public static TemplateDescriptionType GetClassDescriptionType(string luokkakuvausTyyppi)
+        public static TemplateDescriptionTypes GetClassDescriptionType(string luokkakuvausTyyppi)
         {
-            return (TemplateDescriptionType)Enum.Parse(typeof(TemplateDescriptionType), luokkakuvausTyyppi, true);
+            return (TemplateDescriptionTypes) Enum.Parse(typeof (TemplateDescriptionTypes), luokkakuvausTyyppi, true);
         }
 
-        private static string SearchProperty(XElement node, string property)
+        private static string SearchProperty(XNode node, string property)
         {
             if (node == null)
             {
@@ -103,7 +103,9 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("property");
             }
 
-            return node.XPathSelectElement(string.Format(CultureInfo.InvariantCulture, "property[@name='{0}']", property)).Attributes("value").First().Value;
+            return
+                node.XPathSelectElement(string.Format(CultureInfo.InvariantCulture, "property[@name='{0}']", property)).
+                    Attributes("value").First().Value;
         }
     }
 }

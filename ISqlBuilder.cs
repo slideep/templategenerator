@@ -2,12 +2,16 @@
 using System.Data;
 
 namespace TemplateGenerator
-{   
-    internal interface ISqlBuilder<out TParameters, UDataParameter> where TParameters : IDictionary<string, UDataParameter>
+{
+    internal interface ISqlBuilder<out TParameters, TUDataParameter>
+        where TParameters : IDictionary<string, TUDataParameter>
     {
         ICollection<string> ColumnNames { get; }
+
         TParameters Parameters { get; }
+
         IDataParameter FetchParameter(string parameterName, object value);
-        string BuildSql(string tableName, SqlBuilderOperation operation);        
+
+        string BuildSql(string tableName, SqlBuilderOperationTypes operationTypes);
     }
 }

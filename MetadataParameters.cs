@@ -3,7 +3,7 @@
     public static class MetadataParameters
     {
         public const string Name = "$name";
-        public const string Metainformation = "$metainformation";
+        public const string MetaInformation = "$metainformation";
         public const string ClassType = "$classtype";
         public const string Description = "$description";
         public const string TableName = "$tablename";

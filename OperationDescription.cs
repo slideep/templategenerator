@@ -6,9 +6,13 @@ namespace TemplateGenerator
     public class OperationDescription
     {
         public IDictionary<string, Type> Parameters { get; private set; }
+
         public string Name { get; set; }
+
         public string Description { get; set; }
+
         public string ReturnDataType { get; set; }
+
         public string Visibility { get; set; }
 
         public OperationDescription(string name, string description, string returnType, IDictionary<string, Type> parameters)

@@ -25,6 +25,42 @@ namespace TemplateGenerator
 
         protected dynamic DefaultValue { get; set; }
 
+        public string DotNetDataType
+        {
+            get
+            {
+                switch (DataType)
+                {
+                    case "long":
+                        return "long";
+                    case "Double":
+                        return "decimal";
+                    case "decimal":
+                        return "decimal";
+                    case "Decimal":
+                        return "decimal";
+                    case "Integer":
+                        return "int";
+                    case "int":
+                        return "int";
+                    case "String":
+                        return "string";
+                    case "string":
+                        return "string";
+                    case "Date":
+                        return "DateTime";
+                    case "DateTime":
+                        return "DateTime";
+                    case "bool":
+                        return "bool";
+                    case "Boolean":
+                        return "bool";
+                    default:
+                        return DataType;
+                }
+            }
+        }
+
         public void SetDefaultValue(string defaultValue)
         {
             if (string.IsNullOrWhiteSpace(defaultValue))
@@ -40,7 +76,7 @@ namespace TemplateGenerator
                 case "Double":
                     DefaultValue = Convert.ToDouble(defaultValue, CultureInfo.InvariantCulture);
                     break;
-                case "decimal":                    
+                case "decimal":
                 case "Decimal":
                     DefaultValue = Convert.ToDecimal(defaultValue, CultureInfo.InvariantCulture);
                     break;
@@ -62,42 +98,5 @@ namespace TemplateGenerator
                     break;
             }
         }
-
-        public string DotNetDataType
-        {
-        	get
-        	{
-            switch (DataType)
-            {
-                case "long":
-                    return "long";
-                case "Double":
-                    return "decimal";
-                case "decimal":
-                    return "decimal";
-                case "Decimal":
-                    return "decimal";
-                case "Integer":
-                    return "int";
-                case "int":
-                    return "int";
-                case "String":
-                    return "string";
-                case "string":
-                    return "string";
-                case "Date":
-                    return "DateTime";
-                case "DateTime":
-                    return "DateTime";
-                case "bool":
-                    return "bool";
-                case "Boolean":
-                    return "bool";
-                default:
-                    return DataType;
-            }
-        	}
-        }
-
     }
 }

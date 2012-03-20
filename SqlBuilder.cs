@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -14,11 +15,6 @@ namespace TemplateGenerator
         public const string SqlSelect = "\"SELECT {0} FROM {1} WHERE {2}\"";
         public const string SqlInsert = "\"INSERT INTO {0} ({1}) VALUES ({2})\"";
         public const string SqlUpdate = "\"UPDATE {0} SET {1} WHERE {2}\"";
-
-        public string DatabaseName
-        {
-            get { return ""; }
-        }
 
         public SqlBuilder()
         {
@@ -41,49 +37,32 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("parameterName");
             }
 
-            //return new OracleParameter(parameterName, value);
             return null;
         }
 
-        public string BuildSql(string tableName, SqlBuilderOperation operation)
+        public string BuildSql(string tableName, SqlBuilderOperationTypes operationTypes)
         {
             var columnNames = new StringBuilder();
             var parameters = new StringBuilder();
-            
-            //var command = new OracleCommand(DatabaseName, string.Format(SqlRivi, tableName));
-            //var columns = command.FetchTable().Columns;
 
-            //columnNames.Append(
-            //    string.Join(",", 
-            //        columns.OfType<DataColumn>()
-            //        .ToList()
-            //        .ConvertAll<string>(dc => dc.ColumnName.ToUpper()).ToArray()));
-
-            //parameters.Append(
-            //    string.Join(",", 
-            //        columns.OfType<DataColumn>()
-            //        .ToList()
-            //        .ConvertAll<string>(dc => ":" + dc.ColumnName.ToUpper()).ToArray()));
-
-            //SetColumnNames(columns);
-
-            switch (operation)
+            switch (operationTypes)
             {
-                case SqlBuilderOperation.Select:
+                case SqlBuilderOperationTypes.Select:
                     {
                         parameters.Clear();
                         parameters.Append("USERNAME = :username");
                         return string.Format(CultureInfo.InvariantCulture, SqlSelect, columnNames, tableName, parameters);
                     }
-                case SqlBuilderOperation.Insert:
+                case SqlBuilderOperationTypes.Insert:
                     return string.Format(CultureInfo.InvariantCulture, SqlInsert, tableName, columnNames, parameters);
-                case SqlBuilderOperation.Update:
+                case SqlBuilderOperationTypes.Update:
                     {
                         const string formatString =
                             @"(@paramName@ = :ed_@paramName@ OR (@paramName@ IS NULL AND :ed_@paramName@ IS NULL)) AND";
 
                         columnNames.Clear();
-                        columnNames.Append(string.Join(",", ColumnNames.Select(s => formatString.Replace("@paramName@", s))));
+                        columnNames.Append(string.Join(",",
+                                                       ColumnNames.Select(s => formatString.Replace("@paramName@", s))));
 
                         return string.Format(CultureInfo.InvariantCulture, SqlUpdate, tableName, columnNames, parameters);
                     }
@@ -92,29 +71,36 @@ namespace TemplateGenerator
             return string.Empty;
         }
 
-		private ICollection<string> FetchColumnNames(DataColumnCollection columns)
-		{
-			if (columns == null)
-            {
-                throw new ArgumentNullException("columns");
-            }
-
-            return Array.AsReadOnly<string>(columns.OfType<DataColumn>().ToList().ConvertAll<string>(dc => dc.ColumnName.ToLowerInvariant()).ToArray());
-		}
-		
-        private void SetColumnNames(DataColumnCollection columns)
+        protected static ICollection<string> FetchColumnNames(DataColumnCollection columns)
         {
             if (columns == null)
             {
                 throw new ArgumentNullException("columns");
             }
 
-            ColumnNames = 
-                Array.AsReadOnly<string>(columns.OfType<DataColumn>()
-                .ToList()
-                .ConvertAll<string>(dc => dc.ColumnName.ToLowerInvariant()).ToArray());
+            return
+                Array.AsReadOnly(
+                    columns.OfType<DataColumn>().ToList().ConvertAll(dc => dc.ColumnName.ToUpperInvariant()).ToArray());
+        }
+
+        protected void SetColumnNames(IEnumerable columns)
+        {
+            if (columns == null)
+            {
+                throw new ArgumentNullException("columns");
+            }
+
+            ColumnNames =
+                Array.AsReadOnly(columns.OfType<DataColumn>()
+                                     .ToList()
+                                     .ConvertAll(dc => dc.ColumnName.ToUpperInvariant()).ToArray());
         }
 
         #endregion
+
+        public string DatabaseName
+        {
+            get { return string.Empty; }
+        }
     }
 }

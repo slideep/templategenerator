@@ -7,7 +7,8 @@ namespace TemplateGenerator
 {
     public class ClassDescription : IDescription
     {
-        public ClassDescription(string name, string description, IEnumerable<PropertyDescription> properties)
+        public ClassDescription(string name, string description, IEnumerable<PropertyDescription> properties,
+                                ReadOnlyCollection<OperationDescription> operations)
         {
             if (name == null)
             {
@@ -25,6 +26,7 @@ namespace TemplateGenerator
             Name = name;
             Description = description;
             Properties = new ReadOnlyCollection<PropertyDescription>(properties.ToList());
+            Operations = operations;
             Builder = new SqlBuilder();
         }
 
@@ -32,21 +34,21 @@ namespace TemplateGenerator
 
         public string BuildSqlSelect
         {
-            get { return Builder.BuildSql(TableName, SqlBuilderOperation.Select); }
+            get { return Builder.BuildSql(TableName, SqlBuilderOperationTypes.Select); }
         }
 
         public string BuildSqlUpdate
         {
-            get { return Builder.BuildSql(TableName, SqlBuilderOperation.Update); }
+            get { return Builder.BuildSql(TableName, SqlBuilderOperationTypes.Update); }
         }
 
         public string BuildSqlInsert
         {
-            get { return Builder.BuildSql(TableName, SqlBuilderOperation.Insert); }
+            get { return Builder.BuildSql(TableName, SqlBuilderOperationTypes.Insert); }
         }
 
         public ReadOnlyCollection<OperationDescription> Operations { get; private set; }
-        
+
         public SqlBuilder Builder { get; private set; }
 
         #region IDescription Members
@@ -59,8 +61,8 @@ namespace TemplateGenerator
 
         public string FileFullPath { get; set; }
 
+        public ReadOnlyCollection<PropertyDescription> Properties { get; private set; }
+
         #endregion
-    	
-		public ReadOnlyCollection<PropertyDescription> Properties { get; private set; }
     }
 }

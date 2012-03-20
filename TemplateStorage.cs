@@ -15,15 +15,7 @@ namespace TemplateGenerator
 
         public static TemplateStorage Instance
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new TemplateStorage();
-                }
-
-                return _instance;
-            }
+            get { return _instance ?? (_instance = new TemplateStorage()); }
         }
 
         public IDictionary<string, ITemplate> Templates

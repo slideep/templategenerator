@@ -1,15 +1,10 @@
 using System;
-using System.Globalization;
 using System.Text;
 
 namespace TemplateGenerator
 {
     internal class ClassGenerator : IGenerator
     {
-        public string ClassTemplate { get; private set; }
-        public string PropertyTemplate { get; private set; }
-        public string ParameterTemplate { get; private set; }
-
         public ClassGenerator(ITemplate template)
         {
             if (template == null)
@@ -21,15 +16,23 @@ namespace TemplateGenerator
             ClassTemplate = GeneratedTemplate.ClassTemplate;
             PropertyTemplate = GeneratedTemplate.PropertyTemplate;
             ParameterTemplate = GeneratedTemplate.ParameterTemplate;
-            DescriptionType = GeneratedTemplate.DescriptionType;
+            DescriptionTypes = GeneratedTemplate.DescriptionTypes;
             SovitusParametriPohja = GeneratedTemplate.SovitusParameterTemplate;
         }
 
+        public string ParameterTemplate { get; private set; }
+
         protected string SovitusParametriPohja { get; set; }
 
-        protected TemplateDescriptionType DescriptionType { get; set; }
+        protected TemplateDescriptionTypes DescriptionTypes { get; set; }
 
         protected ITemplate GeneratedTemplate { get; set; }
+
+        #region IGenerator Members
+
+        public string ClassTemplate { get; private set; }
+
+        public string PropertyTemplate { get; private set; }
 
         public string Generate(IDescription description)
         {
@@ -38,11 +41,11 @@ namespace TemplateGenerator
                 throw new ArgumentNullException("description");
             }
 
-            string classTemplateString = ClassTemplate;
+            var classTemplateString = ClassTemplate;
 
             classTemplateString = classTemplateString.Replace("@class@", description.Name);
             classTemplateString = classTemplateString.Replace("@description@", description.Description);
-            
+
             var classDescription = description as ClassDescription;
             if (classDescription != null)
             {
@@ -52,15 +55,20 @@ namespace TemplateGenerator
                     classTemplateString = classTemplateString.Replace("@selectsql@", classDescription.BuildSqlSelect);
                     classTemplateString = classTemplateString.Replace("@insertsql@", classDescription.BuildSqlInsert);
                     classTemplateString = classTemplateString.Replace("@updatesql@", classDescription.BuildSqlUpdate);
-                    classTemplateString = classTemplateString.Replace("@parameters@", CreateParameters(classDescription).ToString());
+                    classTemplateString = classTemplateString.Replace("@parameters@",
+                                                                      CreateParameters(classDescription).ToString());
                 }
 
-                classTemplateString = classTemplateString.Replace("@properties@", CreateProperties(classDescription).ToString());
-                classTemplateString = classTemplateString.Replace("@sovitusParametri@", LuoSovitusParametrit(classDescription).ToString());
+                classTemplateString = classTemplateString.Replace("@properties@",
+                                                                  CreateProperties(classDescription).ToString());
+                classTemplateString = classTemplateString.Replace("@sovitusParametri@",
+                                                                  LuoSovitusParametrit(classDescription).ToString());
             }
 
             return classTemplateString;
         }
+
+        #endregion
 
         private StringBuilder LuoSovitusParametrit(ClassDescription description)
         {
@@ -73,7 +81,7 @@ namespace TemplateGenerator
 
             foreach (var parameterName in description.Builder.ColumnNames)
             {
-                string parameterString = SovitusParametriPohja;
+                var parameterString = SovitusParametriPohja;
                 parameterString = GetParameterString(description, parameterString, parameterName);
                 parameters.Append(parameterString);
             }
@@ -92,15 +100,18 @@ namespace TemplateGenerator
 
             foreach (var parameterName in description.Builder.ColumnNames)
             {
-                string parameterString = ParameterTemplate;
+                var parameterString = ParameterTemplate;
 
-                switch (DescriptionType)
+                switch (DescriptionTypes)
                 {
-                    case TemplateDescriptionType.Controller:
+                    case TemplateDescriptionTypes.Controller:
                         {
                             parameterString =
                                 parameterString.Replace("@parameterName@",
-                            	                        string.Concat(parameterName.Substring(0, 1).ToUpperInvariant(), parameterName.Substring(1, parameterName.Length - 1).ToLowerInvariant()));
+                                                        string.Concat(parameterName.Substring(0, 1).ToUpperInvariant(),
+                                                                      parameterName.Substring(1,
+                                                                                              parameterName.Length - 1).
+                                                                          ToUpperInvariant()));
                             parameterString = parameterString.Replace("@class@", description.Name);
                         }
                         break;
@@ -121,17 +132,17 @@ namespace TemplateGenerator
             {
                 throw new ArgumentNullException("description");
             }
-            
+
             var properties = new StringBuilder();
 
             foreach (var propertyDescription in description.Properties)
             {
-                string propertyString = PropertyTemplate;
+                var propertyString = PropertyTemplate;
 
                 propertyString = propertyString.Replace("@name@", propertyDescription.Name);
                 propertyString = propertyString.Replace("@description@", propertyDescription.Description);
                 propertyString = propertyString.Replace("@datatype@", propertyDescription.DotNetDataType);
-           
+
                 properties.Append(propertyString);
             }
 
@@ -140,7 +151,8 @@ namespace TemplateGenerator
 
         #region Static members
 
-        private static string GetParameterString(ClassDescription description, string parameterString, string parametriNimi)
+        private static string GetParameterString(ClassDescription description, string parameterString,
+                                                 string parametriNimi)
         {
             if (description == null)
             {
@@ -150,14 +162,14 @@ namespace TemplateGenerator
             parameterString =
                 parameterString.Replace("@sovitusParametri1@",
                                         string.Concat(
-            	                        	parametriNimi.Substring(0, 1).ToUpperInvariant(),
-            	                        	parametriNimi.Substring(1, parametriNimi.Length - 1).ToLowerInvariant()));
+                                            parametriNimi.Substring(0, 1).ToUpperInvariant(),
+                                            parametriNimi.Substring(1, parametriNimi.Length - 1).ToUpperInvariant()));
             parameterString =
                 parameterString.Replace("@sovitusParametri2@",
                                         string.Concat(
-                                            parametriNimi.Substring(0, 1).ToUpperInvariant(), 
-                                            parametriNimi.Substring(1, parametriNimi.Length - 1).ToLowerInvariant()));
-											
+                                            parametriNimi.Substring(0, 1).ToUpperInvariant(),
+                                            parametriNimi.Substring(1, parametriNimi.Length - 1).ToUpperInvariant()));
+
             parameterString = parameterString.Replace("@class@", description.Name);
 
             return parameterString;
