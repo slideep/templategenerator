@@ -1,0 +1,5 @@
+=======================================================================
+templategenerator
+=======================================================================
+
+A simple passive code/template generator. Generates code once and then gives up all responsibility for it.
