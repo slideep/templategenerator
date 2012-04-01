@@ -1,1 +1,25 @@
 # git ignore file
+# Compiled source #
+###################
+*.class
+*.dll
+*.exe
+
+# Packages #
+############
+*.gz
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+
+# OS generated files #
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# ReSharper files #
+_ReSharper.TemplateGenerator*

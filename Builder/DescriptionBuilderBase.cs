@@ -10,7 +10,7 @@ namespace TemplateGenerator.Builder
 {
     /// <summary>
     /// A base class for creating template builders of given <typeparam name="TNodeType"/> type.
-    /// Deriving class has to implement 
+    /// Deriving class has to implement abstract members of this class.
     /// </summary>
     /// <typeparam name="TNodeType">Node type</typeparam>
     public abstract class DescriptionBuilderBase<TNodeType>
@@ -23,40 +23,49 @@ namespace TemplateGenerator.Builder
         /// <summary>
         /// Build all available templates from the given default class template directory.
         /// </summary>
-        /// <returns>IDictionary{string, IDescription}</returns>
-        public virtual IDictionary<string, IDescription> BuildTemplates()
+        /// <value> IDictionary{string, IDescription} </value>
+        public virtual IDictionary<string, IDescription> BuiltTemplates
         {
-            try
+            get
             {
-                var classDescriptions = new Dictionary<string, IDescription>();
-
-                string templateDirectory = Settings.Default.ClassTemplateDirectory;
-                if (templateDirectory != null && Directory.Exists(templateDirectory))
+                try
                 {
-                    string queryCondition = string.Format(CultureInfo.InvariantCulture, "*{0}", Extension);
+                    var classDescriptions = new Dictionary<string, IDescription>();
 
-                    Directory.EnumerateFiles(templateDirectory, queryCondition, SearchOption.AllDirectories).AsParallel()
-                        .ToList().ForEach(fileName =>
-                                              {
-                                                  string xml = File.ReadAllText(fileName);
-                                                  if (string.IsNullOrWhiteSpace(xml))
-                                                      return;
+                    var templateDirectory = Settings.Default.ClassTemplateDirectory;
+                    if (templateDirectory != null && Directory.Exists(templateDirectory))
+                    {
+                        var queryCondition = string.Format(CultureInfo.InvariantCulture, "*{0}", Extension);
 
-                                                  IDescription description = BuildDescription(xml);
-                                                  if (description == null)
-                                                      return;
+                        Directory.EnumerateFiles(
+                            templateDirectory, queryCondition, SearchOption.AllDirectories)
+                            .AsParallel()
+                            .ToList().ForEach(fileName =>
+                            {
+                                var xml = File.ReadAllText(fileName);
+                                if (string.IsNullOrWhiteSpace(xml))
+                                {
+                                    return;
+                                }
 
-                                                  description.FileFullPath = fileName;
+                                var description = BuildDescription(xml);
+                                if (description == null)
+                                {
+                                    return;
+                                }
 
-                                                  classDescriptions.Add(description.Name, description);
-                                              });
+                                description.FileFullPath = fileName;
+
+                                classDescriptions.Add(description.Name, description);
+                            });
+                    }
+
+                    return classDescriptions;
                 }
-
-                return classDescriptions;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Error reading class template descriptions.", ex);
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Error reading class template descriptions.", ex);
+                }
             }
         }
 

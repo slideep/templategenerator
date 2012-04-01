@@ -17,6 +17,11 @@ namespace TemplateGenerator.Builder
 
         #region Overrides of DescriptionBuilderBase
 
+        /// <summary>
+        /// Builds <see cref="IDescription"/> based on input XML-string.
+        /// </summary>
+        /// <param name="xml">XML-string</param>
+        /// <returns>IDescription</returns>
         protected override IDescription BuildDescription(string xml)
         {
             if (xml == null)
@@ -51,6 +56,13 @@ namespace TemplateGenerator.Builder
 
         #endregion
 
+        /// <summary>
+        /// Fetch enumerable over <see cref="PropertyDescription"/> types.
+        /// </summary>
+        /// <param name="templateNode">Node type</param>
+        /// <param name="propertyDescription">Property description</param>
+        /// <typeparam name="TNodeType">Node type</typeparam>
+        /// <returns>IEnumerable{PropertyDescription}</returns>
         protected override IEnumerable<PropertyDescription> FetchProperties(XElement templateNode,
                                                                             string propertyDescription)
         {
@@ -70,30 +82,27 @@ namespace TemplateGenerator.Builder
             if (propertyNodes.Any())
             {
                 propertyNodes.TakeWhile(HasElement).ToList().ForEach(propertyNode =>
-                                                                         {
-                                                                             string elementName =
-                                                                                 SearchProperty(propertyNode,
-                                                                                                MetadataParameters.Name);
+                {
+                    var elementName = SearchProperty(propertyNode, MetadataParameters.Name);
 
-                                                                             if (elementName == null) return;
+                    if (elementName == null)
+                    {
+                        return;
+                    }
 
-                                                                             var description =
-                                                                                 new PropertyDescription(elementName, string.Empty,
-                                                                                                         string.Empty);
+                    var description = new PropertyDescription(elementName, string.Empty, string.Empty);
 
-                                                                             if (
-                                                                                 propertyDescriptions.Contains(
-                                                                                     description))
-                                                                             {
-                                                                                 throw new InvalidOperationException(
-                                                                                     string.Format(
-                                                                                         CultureInfo.InvariantCulture,
-                                                                                         "XML-description has a duplicate element defined: '{0}'",
-                                                                                         elementName));
-                                                                             }
+                    if (propertyDescriptions.Contains(description))
+                    {
+                        throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "XML-description has a duplicate element defined: '{0}'",
+                                elementName));
+                    }
 
-                                                                             propertyDescriptions.Add(description);
-                                                                         });
+                    propertyDescriptions.Add(description);
+                });
 
                 return propertyDescriptions;
             }

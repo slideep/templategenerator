@@ -71,6 +71,7 @@ namespace TemplateGenerator.Builder
                     var hasAttribute =
                         SearchProperty(propertyNode, MetadataParameters.MetaInformation)
                         .Equals(MetadataParameters.Attribute, StringComparison.Ordinal);
+
                     if (isPublic && hasAttribute)
                     {
                         AddPropertyDescription(propertyDescriptions, propertyNode);
@@ -83,7 +84,7 @@ namespace TemplateGenerator.Builder
             return Enumerable.Empty<PropertyDescription>();
         }
 
-        private static void AddPropertyDescription(Collection<PropertyDescription> propertyDescriptions, XmlNode propertyNode)
+        private static void AddPropertyDescription(ICollection<PropertyDescription> propertyDescriptions, XmlNode propertyNode)
         {
             if (propertyDescriptions == null)
             {
@@ -125,7 +126,7 @@ namespace TemplateGenerator.Builder
             try
             {
                 var childNode =
-                    node.SelectSingleNode(string.Format(CultureInfo.InvariantCulture, "property[@name='{0}']", property));
+                    node.SelectSingleNode(string.Format(CultureInfo.InvariantCulture, @"property[@name='{0}']", property));
 
                 if (childNode == null)
                 {

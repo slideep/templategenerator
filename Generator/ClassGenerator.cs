@@ -43,28 +43,26 @@ namespace TemplateGenerator.Generator
                 throw new ArgumentNullException("description");
             }
 
-            var classTemplateString = ClassTemplate;
+            var classTemplateString = ClassTemplate;            
 
-            classTemplateString = classTemplateString.Replace("@class@", description.Name);
-            classTemplateString = classTemplateString.Replace("@description@", description.Description);
+            classTemplateString = classTemplateString.Replace(MetadataParameters.ClassName, description.Name);
+            classTemplateString = classTemplateString.Replace(MetadataParameters.DescriptionName, description.Description);
 
             var classDescription = description as ClassDescription;
             if (classDescription != null)
             {
                 if (classDescription.IsDataAccessClass)
                 {
-                    classTemplateString = classTemplateString.Replace("@tablename@", classDescription.TableName);
-                    classTemplateString = classTemplateString.Replace("@selectsql@", classDescription.BuildSqlSelect);
-                    classTemplateString = classTemplateString.Replace("@insertsql@", classDescription.BuildSqlInsert);
-                    classTemplateString = classTemplateString.Replace("@updatesql@", classDescription.BuildSqlUpdate);
-                    classTemplateString = classTemplateString.Replace("@parameters@",
-                                                                      CreateParameters(classDescription).ToString());
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.TableNameName, classDescription.TableName);
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.SelectSqlName, classDescription.BuildSqlSelect);
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.InsertSqlName, classDescription.BuildSqlInsert);
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.UpdateSqlName, classDescription.BuildSqlUpdate);
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.ParametersName, CreateParameters(classDescription).ToString());
                 }
 
-                classTemplateString = classTemplateString.Replace("@properties@",
-                                                                  CreateProperties(classDescription).ToString());
+                classTemplateString = classTemplateString.Replace(MetadataParameters.PropertiesName,CreateProperties(classDescription).ToString());
                 classTemplateString = classTemplateString.Replace("@sovitusParametri@",
-                                                                  LuoSovitusParametrit(classDescription).ToString());
+                                                                  CreateColumnNameParameters(classDescription).ToString());
             }
 
             return classTemplateString;
@@ -72,7 +70,7 @@ namespace TemplateGenerator.Generator
 
         #endregion
 
-        private StringBuilder LuoSovitusParametrit(ClassDescription description)
+        private StringBuilder CreateColumnNameParameters(ClassDescription description)
         {
             if (description == null)
             {
@@ -109,16 +107,16 @@ namespace TemplateGenerator.Generator
                     case TemplateDescriptionTypes.Controller:
                         {
                             parameterString =
-                                parameterString.Replace("@parameterName@",
+                                parameterString.Replace(MetadataParameters.ParameterName,
                                                         string.Concat(parameterName.Substring(0, 1).ToUpperInvariant(),
                                                                       parameterName.Substring(1,
                                                                                               parameterName.Length - 1).
                                                                           ToUpperInvariant()));
-                            parameterString = parameterString.Replace("@class@", description.Name);
+                            parameterString = parameterString.Replace(MetadataParameters.ClassName, description.Name);
                         }
                         break;
                     default:
-                        parameterString = parameterString.Replace("@parameterName@", parameterName);
+                        parameterString = parameterString.Replace(MetadataParameters.ParameterName, parameterName);
                         break;
                 }
 
@@ -142,8 +140,8 @@ namespace TemplateGenerator.Generator
                 var propertyString = PropertyTemplate;
 
                 propertyString = propertyString.Replace("@name@", propertyDescription.Name);
-                propertyString = propertyString.Replace("@description@", propertyDescription.Description);
-                propertyString = propertyString.Replace("@datatype@", propertyDescription.DotNetDataType);
+                propertyString = propertyString.Replace(MetadataParameters.DescriptionName, propertyDescription.Description);
+                propertyString = propertyString.Replace(MetadataParameters.DataTypeName, propertyDescription.DotNetDataType);
 
                 properties.Append(propertyString);
             }
@@ -153,7 +151,7 @@ namespace TemplateGenerator.Generator
 
         #region Static members
 
-        private static string GetParameterString(ClassDescription description, string parameterString,
+        private static string GetParameterString(IDescription description, string parameterString,
                                                  string parametriNimi)
         {
             if (description == null)
@@ -172,7 +170,7 @@ namespace TemplateGenerator.Generator
                                             parametriNimi.Substring(0, 1).ToUpperInvariant(),
                                             parametriNimi.Substring(1, parametriNimi.Length - 1).ToUpperInvariant()));
 
-            parameterString = parameterString.Replace("@class@", description.Name);
+            parameterString = parameterString.Replace(MetadataParameters.ClassName, description.Name);
 
             return parameterString;
         }

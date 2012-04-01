@@ -8,7 +8,7 @@ namespace TemplateGenerator.Description
     [Serializable]
     public class XmlDescription : IDescription
     {
-        public XmlDescription(string xmlName, string xmlDescription, IEnumerable<PropertyDescription> properties)
+        public XmlDescription(string xmlName, string xmlDescription, IEnumerable<IPropertyDescription> properties)
         {
             if (xmlName == null)
             {
@@ -25,12 +25,10 @@ namespace TemplateGenerator.Description
 
             Name = xmlName;
             Description = xmlDescription;
-            Properties = new ReadOnlyCollection<PropertyDescription>(properties.ToList());
+            Properties = new ReadOnlyCollection<IPropertyDescription>(properties.ToList());
         }
 
         #region Implementation of IDescription
-
-        public string SurrogateValue { get; set; }
 
         public int? Year { get; set; }
 
@@ -42,12 +40,44 @@ namespace TemplateGenerator.Description
 
         public string FileFullPath { get; set; }
 
-        public ReadOnlyCollection<PropertyDescription> Properties { get; private set; }
+        public ReadOnlyCollection<IPropertyDescription> Properties { get; private set; }
 
         #endregion
 
         public string EventType { get; set; }
 
         public string Namespace { get; set; }
+
+        #region Implementation of IComparable<in IDescription>
+
+        /// <summary>
+        /// Compares the current object with another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>. 
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public int CompareTo(IDescription other)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Implementation of IEquatable<IDescription>
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals(IDescription other)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

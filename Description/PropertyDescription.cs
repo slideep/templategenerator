@@ -4,7 +4,7 @@ using System.Globalization;
 namespace TemplateGenerator.Description
 {
     [Serializable]
-    public class PropertyDescription
+    public class PropertyDescription : IPropertyDescription
     {
         public PropertyDescription(string name, string description, string dataType)
         {
@@ -24,7 +24,7 @@ namespace TemplateGenerator.Description
 
         public string DataType { get; set; }
 
-        protected dynamic DefaultValue { get; set; }
+        public dynamic DefaultValue { get; set; }
 
         public string DotNetDataType
         {
@@ -62,6 +62,11 @@ namespace TemplateGenerator.Description
             }
         }
 
+        /// <summary>
+        /// Sets the given default value for the property. 
+        /// Based on it's data type converted to the conforming type.
+        /// </summary>
+        /// <param name="defaultValue">The default value for the property.</param>
         public void SetDefaultValue(string defaultValue)
         {
             if (string.IsNullOrWhiteSpace(defaultValue))

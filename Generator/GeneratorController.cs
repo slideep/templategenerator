@@ -29,8 +29,8 @@ namespace TemplateGenerator.Generator
                 {
                     var buildDescriptions = new List<IDictionary<string, IDescription>>
                                                 {
-                                                    new ClassDescriptionBuilder().BuildTemplates(),
-                                                    new XmlDescriptionBuilder().BuildTemplates()
+                                                    new ClassDescriptionBuilder().BuiltTemplates,
+                                                    new XmlDescriptionBuilder().BuiltTemplates
                                                 };
 
                     _descriptions =
