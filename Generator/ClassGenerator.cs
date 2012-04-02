@@ -7,7 +7,7 @@ namespace TemplateGenerator.Generator
 {
     internal class ClassGenerator : IGenerator
     {
-        public ClassGenerator(ITemplate template)
+        public ClassGenerator(TemplateBase template)
         {
             if (template == null)
             {
@@ -18,7 +18,7 @@ namespace TemplateGenerator.Generator
             ClassTemplate = GeneratedTemplate.ClassTemplate;
             PropertyTemplate = GeneratedTemplate.PropertyTemplate;
             ParameterTemplate = GeneratedTemplate.ParameterTemplate;
-            DescriptionTypes = GeneratedTemplate.DescriptionTypes;
+            DescriptionTypes = GeneratedTemplate.DescriptionType;
             SovitusParametriPohja = GeneratedTemplate.SovitusParameterTemplate;
         }
 
@@ -28,14 +28,26 @@ namespace TemplateGenerator.Generator
 
         protected TemplateDescriptionTypes DescriptionTypes { get; set; }
 
-        protected ITemplate GeneratedTemplate { get; set; }
+        protected TemplateBase GeneratedTemplate { get; set; }
 
         #region IGenerator Members
 
+        /// <summary>
+        /// Gets the class template text.
+        /// </summary>
         public string ClassTemplate { get; private set; }
 
+        /// <summary>
+        /// Gets the property template text.
+        /// </summary>
         public string PropertyTemplate { get; private set; }
 
+        /// <summary>
+        /// Gets the generated template text based on <see cref="IDescription"/> implementation.
+        /// </summary>
+        /// <param name="description"><see cref="IDescription"/> implementation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <see cref="IDescription"/> implementation is null.</exception>
+        /// <returns>Generated template text</returns>
         public string Generate(IDescription description)
         {
             if (description == null)
@@ -43,25 +55,32 @@ namespace TemplateGenerator.Generator
                 throw new ArgumentNullException("description");
             }
 
-            var classTemplateString = ClassTemplate;            
+            var classTemplateString = ClassTemplate;
 
             classTemplateString = classTemplateString.Replace(MetadataParameters.ClassName, description.Name);
-            classTemplateString = classTemplateString.Replace(MetadataParameters.DescriptionName, description.Description);
+            classTemplateString = classTemplateString.Replace(MetadataParameters.DescriptionName,
+                                                              description.Description);
 
             var classDescription = description as ClassDescription;
             if (classDescription != null)
             {
                 if (classDescription.IsDataAccessClass)
                 {
-                    classTemplateString = classTemplateString.Replace(MetadataParameters.TableNameName, classDescription.TableName);
-                    classTemplateString = classTemplateString.Replace(MetadataParameters.SelectSqlName, classDescription.BuildSqlSelect);
-                    classTemplateString = classTemplateString.Replace(MetadataParameters.InsertSqlName, classDescription.BuildSqlInsert);
-                    classTemplateString = classTemplateString.Replace(MetadataParameters.UpdateSqlName, classDescription.BuildSqlUpdate);
-                    classTemplateString = classTemplateString.Replace(MetadataParameters.ParametersName, CreateParameters(classDescription).ToString());
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.TableNameName,
+                                                                      classDescription.TableName);
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.SelectSqlName,
+                                                                      classDescription.BuildSqlSelect);
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.InsertSqlName,
+                                                                      classDescription.BuildSqlInsert);
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.UpdateSqlName,
+                                                                      classDescription.BuildSqlUpdate);
+                    classTemplateString = classTemplateString.Replace(MetadataParameters.ParametersName,
+                                                                      CreateParameters(classDescription).ToString());
                 }
 
-                classTemplateString = classTemplateString.Replace(MetadataParameters.PropertiesName,CreateProperties(classDescription).ToString());
-                classTemplateString = classTemplateString.Replace("@sovitusParametri@",
+                classTemplateString = classTemplateString.Replace(MetadataParameters.PropertiesName,
+                                                                  CreateProperties(classDescription).ToString());
+                classTemplateString = classTemplateString.Replace(MetadataParameters.SovitusParametriName,
                                                                   CreateColumnNameParameters(classDescription).ToString());
             }
 
@@ -139,9 +158,11 @@ namespace TemplateGenerator.Generator
             {
                 var propertyString = PropertyTemplate;
 
-                propertyString = propertyString.Replace("@name@", propertyDescription.Name);
-                propertyString = propertyString.Replace(MetadataParameters.DescriptionName, propertyDescription.Description);
-                propertyString = propertyString.Replace(MetadataParameters.DataTypeName, propertyDescription.DotNetDataType);
+                propertyString = propertyString.Replace(MetadataParameters.NameName, propertyDescription.Name);
+                propertyString = propertyString.Replace(MetadataParameters.DescriptionName,
+                                                        propertyDescription.Description);
+                propertyString = propertyString.Replace(MetadataParameters.DataTypeName,
+                                                        propertyDescription.DotNetDataType);
 
                 properties.Append(propertyString);
             }

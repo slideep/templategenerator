@@ -16,9 +16,9 @@ namespace TemplateGenerator.Generator
             get { lock (TemplateNamesDescriptions) { return new List<IDescription>(TemplateNamesDescriptions.Values);} }
         }
 
-        public static IList<ITemplate> Templates
+        public static IList<TemplateBase> Templates
         {
-            get { return new List<ITemplate>(TemplateStorage.Instance.Templates.Values); }
+            get { return new List<TemplateBase>(TemplateStorage.Instance.Templates.Values); }
         }
 
         protected IDictionary<string, IDescription> TemplateNamesDescriptions
@@ -54,16 +54,16 @@ namespace TemplateGenerator.Generator
                 throw new ArgumentNullException("templateName");
             }
 
-            ITemplate template;
+            TemplateBase template;
             if (TemplateStorage.Instance.Templates.TryGetValue(templateName, out template))
             {
-                switch (template.DescriptionTypes)
+                switch (template.DescriptionType)
                 {
                     case TemplateDescriptionTypes.DataAccess:
-                    case TemplateDescriptionTypes.BusinessEntity:
+                    case TemplateDescriptionTypes.Entity:
                     case TemplateDescriptionTypes.Controller:
                     case TemplateDescriptionTypes.ControllerInterface:
-                    case TemplateDescriptionTypes.ConstantClass:
+                    case TemplateDescriptionTypes.Constant:
                         return new ClassGenerator(template).Generate(description);
                 }
             }

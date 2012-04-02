@@ -23,13 +23,26 @@ namespace TemplateGenerator.Builder
 
         #region Implementation of ISqlBuilder<out OracleParameterCollection>
 
+        /// <summary>
+        /// Gets the column names from the database table.
+        /// </summary>
         public ICollection<string> ColumnNames { get; private set; }
 
+        /// <summary>
+        /// Gets the data parameters.
+        /// </summary>
         public IDictionary<string, IDataParameter> Parameters
         {
             get { return null; }
         }
 
+        /// <summary>
+        /// Fetches the named and value given <see cref="IDataParameter"/> implementation.
+        /// </summary>
+        /// <param name="parameterName">Parameter name</param>
+        /// <param name="value">Default value</param>
+        /// <exception cref="ArgumentNullException">Thrown when parameter name is null.</exception>
+        /// <returns><see cref="IDataParameter"/> implementation</returns>
         public IDataParameter FetchParameter(string parameterName, object value)
         {
             if (parameterName == null)
@@ -40,6 +53,12 @@ namespace TemplateGenerator.Builder
             return null;
         }
 
+        /// <summary>
+        /// Builds the SQL-clause from given table name and <see cref="SqlBuilderOperationTypes"/> type.
+        /// </summary>
+        /// <param name="tableName">Table name</param>
+        /// <param name="operationTypes"><see cref="SqlBuilderOperationTypes"/></param>
+        /// <returns>Built SQL-clause</returns>
         public string BuildSql(string tableName, SqlBuilderOperationTypes operationTypes)
         {
             var columnNames = new StringBuilder();
@@ -98,6 +117,9 @@ namespace TemplateGenerator.Builder
 
         #endregion
 
+        /// <summary>
+        /// Gets the database name.
+        /// </summary>
         public string DatabaseName
         {
             get { return string.Empty; }

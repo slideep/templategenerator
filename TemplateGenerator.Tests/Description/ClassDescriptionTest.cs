@@ -1,15 +1,35 @@
 ﻿using System.Collections.ObjectModel;
-using Moq;
 using System.Linq;
+using Moq;
 using TemplateGenerator.Description;
 using Xunit;
 
 namespace TemplateGenerator.Tests.Description
 {
+    /// <summary>
+    /// A class containing tests for <see cref="ClassDescription"/>.
+    /// </summary>
     public class ClassDescriptionTest
     {
         private Mock<IDescription> _moqDescription;
 
+        /// <summary>
+        /// Gets the read-only collection of one <see cref="PropertyDescription"/> instances.
+        /// </summary>
+        /// <value> &lt;see cref=&quot;ReadOnlyCollection{IPropertyDescription}&quot;/&gt; </value>
+        private static ReadOnlyCollection<IPropertyDescription> PropertyDescription
+        {
+            get
+            {
+                return
+                    new IPropertyDescription[] {new PropertyDescription("Name", "Description", "string")}.ToList().
+                        AsReadOnly();
+            }
+        }
+
+        /// <summary>
+        /// A test for conforming thata table- / collection name is the same.
+        /// </summary>
         [Fact]
         public void ShouldContainTableNameWhenInstantiated()
         {
@@ -23,6 +43,9 @@ namespace TemplateGenerator.Tests.Description
             Assert.Same("TableName", _moqDescription.Object.TableName);
         }
 
+        /// <summary>
+        /// A test for conforming that 
+        /// </summary>
         [Fact]
         public void ShouldContainNameWhenInstantiated()
         {
@@ -34,9 +57,9 @@ namespace TemplateGenerator.Tests.Description
 
             // Assert
             Assert.Same("Name", _moqDescription.Object.Name);
-        }        
+        }
 
-        [Fact]   
+        [Fact]
         public void ShouldContainClassDescriptionTextWhenInstantiated()
         {
             // Arrange
@@ -46,38 +69,33 @@ namespace TemplateGenerator.Tests.Description
             // Act
 
             // Assert
-            Assert.Same("Description", _moqDescription.Object.Description);   
-        }        
-        
-        [Fact]   
+            Assert.Same("Description", _moqDescription.Object.Description);
+        }
+
+        [Fact]
         public void ShouldContainFileFullPathWhenInstantiated()
         {
             // Arrange
             _moqDescription = new Mock<IDescription>();
-            _moqDescription.SetupGet(d => d.FileFullPath).Returns(@"C:\TEMP");            
+            _moqDescription.SetupGet(d => d.FileFullPath).Returns(@"C:\TEMP");
 
             // Act            
 
             // Assert
-            Assert.Same(@"C:\TEMP", _moqDescription.Object.FileFullPath);   
+            Assert.Same(@"C:\TEMP", _moqDescription.Object.FileFullPath);
         }
-        
+
         [Fact]
         public void ShouldContainPropertyDescription()
         {
             // Arrange
             _moqDescription = new Mock<IDescription>();
-            _moqDescription.SetupGet(d => d.Properties).Returns(GetPropertyDescription());
-        
+            _moqDescription.SetupGet(d => d.Properties).Returns(PropertyDescription);
+
             // Act
 
             // Assert
             Assert.Single(_moqDescription.Object.Properties);
-        }
-
-        private static ReadOnlyCollection<IPropertyDescription> GetPropertyDescription()
-        {
-            return new IPropertyDescription[] {new PropertyDescription("Name", "Description", "string")}.ToList().AsReadOnly();
         }
     }
 }

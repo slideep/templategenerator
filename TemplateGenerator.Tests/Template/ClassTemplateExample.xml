@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<classTemplate version="0.1">
+  <class>
+    <property name="$metainformation" value="Class" />
+    <property name="$name" value="Entity" />
+    <property name="$description" value="Description for the class." />
+    <property name="$classtype" value="data" />
+    <property name="$tablename" value="airports" />
+    <propertyDescription>
+      <property name="$metainformation" value="Attribute" />
+      <property name="$description" value="A unique identification." />
+      <property name="$name" value="Id" />
+      <property name="$visibility" value="$public" />
+      <property name="$datatype" value="guid" />
+      <property name="$defaultvalue" value="guid" />
+    </propertyDescription>
+  </class>
+</classTemplate>

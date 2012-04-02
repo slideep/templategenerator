@@ -89,7 +89,12 @@ namespace TemplateGenerator.Template
         /// Default token for @class@.
         /// </summary>
         public const string ClassName = "@class@";
-        
+
+        /// <summary>
+        /// Default token for @name@.
+        /// </summary>
+        public const string NameName = "@name@";
+
         /// <summary>
         /// Default token for @description@.
         /// </summary>
@@ -134,5 +139,10 @@ namespace TemplateGenerator.Template
         /// Default token for @datatype@.
         /// </summary>
         public const string DataTypeName = "@datatype@";
+
+        /// <summary>
+        /// Default token for @sovitusParametri@.
+        /// </summary>
+        public const string SovitusParametriName = "@sovitusParametri@";
     }
 }

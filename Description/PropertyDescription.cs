@@ -6,6 +6,14 @@ namespace TemplateGenerator.Description
     [Serializable]
     public class PropertyDescription : IPropertyDescription
     {
+        /// <summary>
+        /// Default constructor ; initialize this instance with name, description and datatype.
+        /// </summary>
+        /// <remarks>Notice! Name-property is only compulsory.</remarks>
+        /// <param name="name">Name of the property</param>
+        /// <param name="description">Summary of the property</param>
+        /// <param name="dataType">Datatype of the property</param>
+        /// <exception cref="ArgumentNullException">Thrown when name parameter is null.</exception>
         public PropertyDescription(string name, string description, string dataType)
         {
             if (name == null)
@@ -18,14 +26,29 @@ namespace TemplateGenerator.Description
             DataType = dataType;
         }
 
+        /// <summary>
+        /// Gets or sets the name of the property.
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets the summary of the property.
+        /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Gets or sets the datatype of the property.
+        /// </summary>
         public string DataType { get; set; }
 
+        /// <summary>
+        /// Gets or sets the default value of the property.
+        /// </summary>
         public dynamic DefaultValue { get; set; }
 
+        /// <summary>
+        /// Gets the datatype in textual form for the property.
+        /// </summary>
         public string DotNetDataType
         {
             get

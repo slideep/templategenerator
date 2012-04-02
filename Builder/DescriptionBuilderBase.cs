@@ -16,9 +16,9 @@ namespace TemplateGenerator.Builder
     public abstract class DescriptionBuilderBase<TNodeType>
     {
         /// <summary>
-        /// Default extension for description builder template (.genClass).
+        /// Default extension for description builder template (.xml).
         /// </summary>
-        public const string Extension = ".genClass";
+        public const string Extension = ".xml";
 
         /// <summary>
         /// Build all available templates from the given default class template directory.

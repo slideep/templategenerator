@@ -9,8 +9,17 @@ using TemplateGenerator.Template;
 
 namespace TemplateGenerator.Builder
 {
+    /// <summary>
+    /// A builder for class descriptions.
+    /// </summary>
     public class ClassDescriptionBuilder : DescriptionBuilderBase<XmlNode>
     {
+        /// <summary>
+        /// Builds <see cref="IDescription"/> based on input XML-string.
+        /// </summary>
+        /// <param name="xml">XML-string</param>
+        /// <exception cref="ArgumentNullException">Thrown when XML-string is null.</exception>
+        /// <returns>IDescription</returns>
         protected override IDescription BuildDescription(string xml)
         {
             if (xml == null)
@@ -47,6 +56,13 @@ namespace TemplateGenerator.Builder
             return null;
         }
 
+        /// <summary>
+        /// Fetch enumerable over <see cref="PropertyDescription"/> types.
+        /// </summary>
+        /// <param name="templateNode">Node type</param>
+        /// <param name="propertyDescription">Property description</param>
+        /// <exception cref="ArgumentNullException">Thrown when template node or property description is null.</exception>
+        /// <returns>IEnumerable{PropertyDescription}</returns>
         protected override IEnumerable<PropertyDescription> FetchProperties(XmlNode templateNode, string propertyDescription)
         {
             if (templateNode == null)

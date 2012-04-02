@@ -20,14 +20,15 @@ namespace TemplateGenerator.Description
             {
                 throw new ArgumentNullException("description");
             }
-            if (properties == null)
-            {
-                throw new ArgumentNullException("properties");
-            }
 
             Name = name;
             Description = description;
-            Properties = new ReadOnlyCollection<IPropertyDescription>(properties.ToList());
+
+            if (properties != null)
+            {
+                Properties = new ReadOnlyCollection<IPropertyDescription>(properties.ToList());
+            }
+
             Operations = operations;
             Builder = new SqlBuilder();
         }
@@ -55,14 +56,29 @@ namespace TemplateGenerator.Description
 
         #region IDescription Members
 
+        /// <summary>
+        /// Gets or sets the template file's used data storage's table or collection name.
+        /// </summary>
         public string TableName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the template file's name (usually a class or XM-element name etc.).
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets the template file's description (or summary for XML-documentation).
+        /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Gets or sets the template file's full path.
+        /// </summary>
         public string FileFullPath { get; set; }
 
+        /// <summary>
+        /// Gets an read-only collection of template's defined property descriptions.
+        /// </summary>
         public ReadOnlyCollection<IPropertyDescription> Properties { get; private set; }
 
         #endregion

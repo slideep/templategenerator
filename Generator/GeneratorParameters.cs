@@ -15,7 +15,7 @@ namespace TemplateGenerator.Generator
 
         public string ParameterTemplate { get; set; }
 
-        public ITemplate GeneroitavaKuvausTyyppiPohja { get; set; }
+        public TemplateBase GeneroitavaKuvausTyyppiPohja { get; set; }
 
         #region IEquatable<GeneratorParameters> Members
 

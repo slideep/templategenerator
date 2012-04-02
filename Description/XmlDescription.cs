@@ -8,6 +8,13 @@ namespace TemplateGenerator.Description
     [Serializable]
     public class XmlDescription : IDescription
     {
+        /// <summary>
+        /// Default constructor ; initialized new description.
+        /// </summary>
+        /// <param name="xmlName">Name of the template description</param>
+        /// <param name="xmlDescription">Template</param>
+        /// <param name="properties">Template properties</param>
+        /// <exception cref="ArgumentNullException">Thrown when one of the constructor parameter's is null.</exception>
         public XmlDescription(string xmlName, string xmlDescription, IEnumerable<IPropertyDescription> properties)
         {
             if (xmlName == null)
@@ -30,21 +37,32 @@ namespace TemplateGenerator.Description
 
         #region Implementation of IDescription
 
-        public int? Year { get; set; }
-
+        /// <summary>
+        /// Gets or sets the template file's used data storage's table or collection name.
+        /// </summary>
         public string TableName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the template file's name (usually a class or XM-element name etc.).
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets the template file's description (or summary for XML-documentation).
+        /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Gets or sets the template file's full path.
+        /// </summary>
         public string FileFullPath { get; set; }
 
+        /// <summary>
+        /// Gets an read-only collection of template's defined property descriptions.
+        /// </summary>
         public ReadOnlyCollection<IPropertyDescription> Properties { get; private set; }
 
         #endregion
-
-        public string EventType { get; set; }
 
         public string Namespace { get; set; }
 

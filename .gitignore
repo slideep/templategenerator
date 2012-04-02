@@ -1,17 +1,18 @@
 # git ignore file
+
+.suo*
+.user*
+.cache*
+
 # Compiled source #
-###################
 *.class
 *.dll
 *.exe
-
-# Packages #
-############
-*.gz
-*.zip
+bin*
+obj*	
+packages*
 
 # Logs and databases #
-######################
 *.log
 *.sql
 

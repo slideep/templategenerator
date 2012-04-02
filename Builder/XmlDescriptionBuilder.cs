@@ -13,6 +13,9 @@ namespace TemplateGenerator.Builder
 {
     public class XmlDescriptionBuilder : DescriptionBuilderBase<XElement>
     {
+        /// <summary>
+        /// Default constant name for propertyDescription-element.
+        /// </summary>
         public const string PropertyDescriptionElement = "propertyDescription";
 
         #region Overrides of DescriptionBuilderBase
@@ -21,6 +24,7 @@ namespace TemplateGenerator.Builder
         /// Builds <see cref="IDescription"/> based on input XML-string.
         /// </summary>
         /// <param name="xml">XML-string</param>
+        /// <exception cref="ArgumentNullException">Thrown when XML-string is null.</exception>
         /// <returns>IDescription</returns>
         protected override IDescription BuildDescription(string xml)
         {
@@ -44,7 +48,6 @@ namespace TemplateGenerator.Builder
                         return new XmlDescription(meta.Name, meta.Description, properties)
                                    {
                                        TableName = meta.TableName,
-                                       EventType = meta.EventType,
                                        Namespace = meta.Namespace
                                    };
                     }
@@ -61,7 +64,7 @@ namespace TemplateGenerator.Builder
         /// </summary>
         /// <param name="templateNode">Node type</param>
         /// <param name="propertyDescription">Property description</param>
-        /// <typeparam name="TNodeType">Node type</typeparam>
+        /// <exception cref="InvalidOperationException">Thrown when XML-description has a duplicate element defined.</exception>
         /// <returns>IEnumerable{PropertyDescription}</returns>
         protected override IEnumerable<PropertyDescription> FetchProperties(XElement templateNode,
                                                                             string propertyDescription)
@@ -77,13 +80,13 @@ namespace TemplateGenerator.Builder
 
             var propertyDescriptions = new Collection<PropertyDescription>();
 
-            var propertyNodes = templateNode.XPathSelectElements(propertyDescription);
+            var propertyNodes = templateNode.XPathSelectElements(propertyDescription).ToList();
 
             if (propertyNodes.Any())
             {
                 propertyNodes.TakeWhile(HasElement).ToList().ForEach(propertyNode =>
                 {
-                    var elementName = SearchProperty(propertyNode, MetadataParameters.Name);
+                    var elementName = TemplateMetadata.SearchProperty(propertyNode, MetadataParameters.Name);
 
                     if (elementName == null)
                     {
@@ -116,27 +119,11 @@ namespace TemplateGenerator.Builder
             {
                 throw new ArgumentNullException("propertyNode");
             }
-
+            
             // TODO: fix hardcoded value or provide a better way to get enum's stringified value
             return
-                SearchProperty(propertyNode, MetadataParameters.MetaInformation).Equals(
+                TemplateMetadata.SearchProperty(propertyNode, MetadataParameters.MetaInformation).Equals(
                     Enum.GetName(typeof (MetadataTypes), 5));
-        }
-
-        private static string SearchProperty(XNode node, string propertyDescription)
-        {
-            if (node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
-            if (propertyDescription == null)
-            {
-                throw new ArgumentNullException("propertyDescription");
-            }
-
-            return
-                node.XPathSelectElement(string.Format(CultureInfo.InvariantCulture, "propertyDescription[@name='{0}']",
-                                                      propertyDescription)).Attributes("value").First().Value;
         }
     }
 }
