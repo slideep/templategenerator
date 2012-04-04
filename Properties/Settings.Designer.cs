@@ -25,13 +25,13 @@ namespace TemplateGenerator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\tmp\\luokkapohjat")]
-        public string ClassTemplateDirectory {
+        [global::System.Configuration.DefaultSettingValueAttribute("Templates")]
+        public string TemplateDirectory {
             get {
-                return ((string)(this["ClassTemplateDirectory"]));
+                return ((string)(this["TemplateDirectory"]));
             }
             set {
-                this["ClassTemplateDirectory"] = value;
+                this["TemplateDirectory"] = value;
             }
         }
     }

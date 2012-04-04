@@ -126,6 +126,7 @@
   <ItemGroup>
     <Compile Include="Builder\ClassDescriptionBuilder.cs" />
     <Compile Include="Builder\DescriptionBuilderBase.cs" />
+    <Compile Include="Builder\DescriptionBuilderFactory.cs" />
     <Compile Include="Builder\ISqlBuilder.cs" />
     <Compile Include="Builder\SqlBuilder.cs" />
     <Compile Include="Builder\SqlBuilderOperationTypes.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Template\TemplateMetadata.cs" />
     <Compile Include="Template\TemplateStorage.cs" />
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="External\Readme.txt" />
     <None Include="External\x64\CodeFluent.Runtime.Compression.dll" />
     <None Include="External\x86\CodeFluent.Runtime.Compression.dll" />

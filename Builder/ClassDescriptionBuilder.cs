@@ -7,6 +7,8 @@ using System.Xml;
 using TemplateGenerator.Description;
 using TemplateGenerator.Template;
 
+// TODO: Moving code away from XmlDocument is first priority -> XmlDescriptionBuilder contains pretty much all necessary functionality.
+
 namespace TemplateGenerator.Builder
 {
     /// <summary>
@@ -57,12 +59,12 @@ namespace TemplateGenerator.Builder
         }
 
         /// <summary>
-        /// Fetch enumerable over <see cref="PropertyDescription"/> types.
+        /// Fetch enumerable over <see cref="PropertyDescription"/> types. 
         /// </summary>
         /// <param name="templateNode">Node type</param>
         /// <param name="propertyDescription">Property description</param>
         /// <exception cref="ArgumentNullException">Thrown when template node or property description is null.</exception>
-        /// <returns>IEnumerable{PropertyDescription}</returns>
+        /// <returns>A IEnumerable{PropertyDescription} sequence with (or without) property descriptions.</returns>
         protected override IEnumerable<PropertyDescription> FetchProperties(XmlNode templateNode, string propertyDescription)
         {
             if (templateNode == null)
@@ -100,6 +102,17 @@ namespace TemplateGenerator.Builder
             return Enumerable.Empty<PropertyDescription>();
         }
 
+        /// <summary>
+        /// Adds new <see cref="PropertyDescription"/> to return collection based on property node's values.
+        /// </summary>
+        /// <param name="propertyDescriptions">A collection where to add <see cref="PropertyDescription"/></param>
+        /// <param name="propertyNode">A node containing property information.</param>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if property descriptions contains already the property.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if collection where to add property is null or property node is null.
+        /// </exception>
         private static void AddPropertyDescription(ICollection<PropertyDescription> propertyDescriptions, XmlNode propertyNode)
         {
             if (propertyDescriptions == null)

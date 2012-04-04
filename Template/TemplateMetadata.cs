@@ -51,7 +51,7 @@ namespace TemplateGenerator.Template
         }
 
         /// <summary>
-        /// Gets the name of the metadata type (used to describe class or maybe XML-element's name).
+        /// Gets the name of the metadata type (used to describe class's or maybe XML-element's name).
         /// </summary>
         public string Name
         {

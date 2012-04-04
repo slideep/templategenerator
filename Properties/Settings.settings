@@ -2,8 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TemplateGenerator.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="ClassTemplateDirectory" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\tmp\luokkapohjat</Value>
+    <Setting Name="TemplateDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Templates</Value>
     </Setting>
   </Settings>
 </SettingsFile>

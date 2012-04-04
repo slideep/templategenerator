@@ -32,7 +32,7 @@ namespace TemplateGenerator.Builder
                 {
                     var classDescriptions = new Dictionary<string, IDescription>();
 
-                    var templateDirectory = Settings.Default.ClassTemplateDirectory;
+                    var templateDirectory = Settings.Default.TemplateDirectory;
                     if (templateDirectory != null && Directory.Exists(templateDirectory))
                     {
                         var queryCondition = string.Format(CultureInfo.InvariantCulture, "*{0}", Extension);
@@ -64,7 +64,7 @@ namespace TemplateGenerator.Builder
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidOperationException("Error reading class template descriptions.", ex);
+                    throw new InvalidOperationException("Error reading template descriptions.", ex);
                 }
             }
         }

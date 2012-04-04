@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace TemplateGenerator.Description
 {
+    /// <summary>
+    /// Represents an description of a XML-file (or element).
+    /// </summary>
     [Serializable]
     public class XmlDescription : IDescription
     {

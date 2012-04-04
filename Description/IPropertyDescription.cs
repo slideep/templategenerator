@@ -1,17 +1,7 @@
 namespace TemplateGenerator.Description
 {
-    public interface IPropertyDescription
+    public interface IPropertyDescription : IDescription
     {
-        /// <summary>
-        /// Gets or sets the name of the property.
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the summary of the property.
-        /// </summary>
-        string Description { get; set; }
-
         /// <summary>
         /// Gets or sets the datatype of the property.
         /// </summary>

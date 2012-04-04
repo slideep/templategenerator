@@ -1,8 +1,13 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 
 namespace TemplateGenerator.Description
 {
+    /// <summary>
+    /// Represents an description of a property.
+    /// </summary>
     [Serializable]
     public class PropertyDescription : IPropertyDescription
     {
@@ -26,6 +31,13 @@ namespace TemplateGenerator.Description
             DataType = dataType;
         }
 
+        #region IPropertyDescription Members
+
+        /// <summary>
+        /// Gets or sets the template file's used data storage's table or collection name.
+        /// </summary>
+        public string TableName { get; set; }
+
         /// <summary>
         /// Gets or sets the name of the property.
         /// </summary>
@@ -35,6 +47,19 @@ namespace TemplateGenerator.Description
         /// Gets or sets the summary of the property.
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the template file's full path.
+        /// </summary>
+        public string FileFullPath { get; set; }
+
+        /// <summary>
+        /// Gets an read-only collection of template's defined property descriptions.
+        /// </summary>
+        public ReadOnlyCollection<IPropertyDescription> Properties
+        {
+            get { return Enumerable.Empty<IPropertyDescription>().ToList().AsReadOnly(); }
+        }
 
         /// <summary>
         /// Gets or sets the datatype of the property.
@@ -55,28 +80,23 @@ namespace TemplateGenerator.Description
             {
                 switch (DataType)
                 {
+                    case "Long":
                     case "long":
                         return "long";
                     case "Double":
-                        return "decimal";
                     case "decimal":
-                        return "decimal";
                     case "Decimal":
                         return "decimal";
                     case "Integer":
-                        return "int";
                     case "int":
                         return "int";
                     case "String":
-                        return "string";
                     case "string":
                         return "string";
                     case "Date":
-                        return "DateTime";
                     case "DateTime":
                         return "DateTime";
                     case "bool":
-                        return "bool";
                     case "Boolean":
                         return "bool";
                     default:
@@ -84,6 +104,8 @@ namespace TemplateGenerator.Description
                 }
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Sets the given default value for the property. 
@@ -127,5 +149,37 @@ namespace TemplateGenerator.Description
                     break;
             }
         }
+
+        #region Implementation of IComparable<in IDescription>
+
+        /// <summary>
+        /// Compares the current object with another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>. 
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public int CompareTo(IDescription other)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Implementation of IEquatable<IDescription>
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals(IDescription other)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

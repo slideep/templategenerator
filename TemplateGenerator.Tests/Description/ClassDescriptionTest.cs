@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Moq;
 using TemplateGenerator.Description;
@@ -14,10 +15,10 @@ namespace TemplateGenerator.Tests.Description
         private Mock<IDescription> _moqDescription;
 
         /// <summary>
-        /// Gets the read-only collection of one <see cref="PropertyDescription"/> instances.
+        /// Gets the read-only collection of one <see cref="PropertyDescriptionPositive"/> instances.
         /// </summary>
         /// <value> &lt;see cref=&quot;ReadOnlyCollection{IPropertyDescription}&quot;/&gt; </value>
-        private static ReadOnlyCollection<IPropertyDescription> PropertyDescription
+        private static ReadOnlyCollection<IPropertyDescription> PropertyDescriptionPositive
         {
             get
             {
@@ -25,10 +26,24 @@ namespace TemplateGenerator.Tests.Description
                     new IPropertyDescription[] {new PropertyDescription("Name", "Description", "string")}.ToList().
                         AsReadOnly();
             }
+        }    
+        
+        /// <summary>
+        /// Gets the read-only collection of one <see cref="PropertyDescriptionPositive"/> instances.
+        /// </summary>
+        /// <value> &lt;see cref=&quot;ReadOnlyCollection{IPropertyDescription}&quot;/&gt; </value>
+        private static ReadOnlyCollection<IPropertyDescription> PropertyDescriptionNegative
+        {
+            get
+            {
+                return
+                    new IPropertyDescription[] {new PropertyDescription(null, "Description", "string")}.ToList().
+                        AsReadOnly();
+            }
         }
 
         /// <summary>
-        /// A test for conforming thata table- / collection name is the same.
+        /// A test for conforming that table- / collection name is the same.
         /// </summary>
         [Fact]
         public void ShouldContainTableNameWhenInstantiated()
@@ -90,12 +105,45 @@ namespace TemplateGenerator.Tests.Description
         {
             // Arrange
             _moqDescription = new Mock<IDescription>();
-            _moqDescription.SetupGet(d => d.Properties).Returns(PropertyDescription);
+            _moqDescription.SetupGet(d => d.Properties).Returns(PropertyDescriptionPositive);
 
             // Act
 
             // Assert
             Assert.Single(_moqDescription.Object.Properties);
         }
+        
+        [Fact]
+        public void ShouldContainPropertyDescriptionDetailsMatch()
+        {
+            // Arrange
+            _moqDescription = new Mock<IDescription>();
+            _moqDescription.SetupGet(d => d.Properties).Returns(PropertyDescriptionPositive);
+
+            // Act
+
+            // Assert
+            var propertyDescription = Assert.Single(_moqDescription.Object.Properties);
+
+            Assert.Same("Name", propertyDescription.Name);
+            Assert.Same("Description", propertyDescription.Description);
+            Assert.Same("string", propertyDescription.DotNetDataType);
+        }
+        
+        
+        [Fact]
+        public void ShouldThrowExceptionWhenPropertyDescriptionCreated()
+        {
+            // Arrange
+            _moqDescription = new Mock<IDescription>();
+
+            // Act
+
+            // Assert
+            Assert.Throws(typeof(ArgumentNullException),
+                          () => _moqDescription.SetupGet(d => d.Properties).Returns(PropertyDescriptionNegative));
+        }
+
+
     }
 }
