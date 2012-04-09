@@ -151,7 +151,6 @@
     <Compile Include="Template\TemplateMetadata.cs" />
     <Compile Include="Template\TemplateStorage.cs" />
     <None Include="App.config" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="External\Readme.txt" />
     <None Include="External\x64\CodeFluent.Runtime.Compression.dll" />
     <None Include="External\x86\CodeFluent.Runtime.Compression.dll" />
