@@ -7,11 +7,11 @@ namespace TemplateGenerator.Tests.Builder
 {
     public class DescriptionBuilderFactoryTest
     {
-        [Fact] 
+        [Fact]
         public void ShouldRegisterTypeAndGetInstance()
         {
             var mockBuilderFactory = new Mock<DescriptionBuilderFactory<XElement>>();
-            mockBuilderFactory
+            //mockBuilderFactory
 
             var builderFactory = new DescriptionBuilderFactory<XElement>();
             builderFactory.Define(() => new XmlDescriptionBuilder());
