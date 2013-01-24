@@ -23,6 +23,8 @@ namespace TemplateGenerator.Builder
             Builders = new Dictionary<Type, Func<object>>();
         }
 
+        private static readonly object SyncObject = new object();
+
         /// <summary>
         /// Gets or sets builders (either defined or built).
         /// </summary>

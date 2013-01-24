@@ -124,12 +124,18 @@ namespace TemplateGenerator.Template
 
         private static MetadataTypes GetMetadataType(string metadataType)
         {
-            return (MetadataTypes) Enum.Parse(typeof (MetadataTypes), metadataType, true);
+            if (metadataType == null)
+                throw new ArgumentNullException("metadataType");
+
+            return (MetadataTypes)Enum.Parse(typeof(MetadataTypes), metadataType, true);
         }
 
-        private static TemplateDescriptionTypes GetClassDescriptionType(string luokkakuvausTyyppi)
+        private static TemplateDescriptionTypes GetClassDescriptionType(string classDescriptionType)
         {
-            return (TemplateDescriptionTypes) Enum.Parse(typeof (TemplateDescriptionTypes), luokkakuvausTyyppi, true);
+            if (classDescriptionType == null)
+                throw new ArgumentNullException("classDescriptionType");
+
+            return (TemplateDescriptionTypes)Enum.Parse(typeof(TemplateDescriptionTypes), classDescriptionType, true);
         }
 
         /// <summary>
@@ -155,4 +161,4 @@ namespace TemplateGenerator.Template
                     Attributes("value").First().Value;
         }
     }
-}
+} 

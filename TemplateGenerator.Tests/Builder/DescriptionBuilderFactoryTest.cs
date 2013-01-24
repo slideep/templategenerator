@@ -10,6 +10,10 @@ namespace TemplateGenerator.Tests.Builder
         [Fact]
         public void ShouldRegisterTypeAndGetInstance()
         {
+            // act
+            // arrange
+            // assert
+
             var mockBuilderFactory = new Mock<DescriptionBuilderFactory<XElement>>();
             //mockBuilderFactory
 
