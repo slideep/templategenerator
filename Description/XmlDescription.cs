@@ -22,15 +22,15 @@ namespace TemplateGenerator.Description
         {
             if (xmlName == null)
             {
-                throw new ArgumentNullException("xmlName");
+                throw new ArgumentNullException(nameof(xmlName));
             }
             if (xmlDescription == null)
             {
-                throw new ArgumentNullException("xmlDescription");
+                throw new ArgumentNullException(nameof(xmlDescription));
             }
             if (properties == null)
             {
-                throw new ArgumentNullException("properties");
+                throw new ArgumentNullException(nameof(properties));
             }
 
             Name = xmlName;
@@ -63,7 +63,7 @@ namespace TemplateGenerator.Description
         /// <summary>
         /// Gets an read-only collection of template's defined property descriptions.
         /// </summary>
-        public ReadOnlyCollection<IPropertyDescription> Properties { get; private set; }
+        public ReadOnlyCollection<IPropertyDescription> Properties { get; }
 
         #endregion
 

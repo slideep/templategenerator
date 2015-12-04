@@ -26,7 +26,7 @@ namespace TemplateGenerator.Builder
         {
             if (xml == null)
             {
-                throw new ArgumentNullException("xml");
+                throw new ArgumentNullException(nameof(xml));
             }
 
             var xmlDocument = new XmlDocument();
@@ -69,11 +69,11 @@ namespace TemplateGenerator.Builder
         {
             if (templateNode == null)
             {
-                throw new ArgumentNullException("templateNode");
+                throw new ArgumentNullException(nameof(templateNode));
             }
             if (propertyDescription == null)
             {
-                throw new ArgumentNullException("propertyDescription");
+                throw new ArgumentNullException(nameof(propertyDescription));
             }
 
             var propertyDescriptions = new Collection<PropertyDescription>();
@@ -117,11 +117,11 @@ namespace TemplateGenerator.Builder
         {
             if (propertyDescriptions == null)
             {
-                throw new ArgumentNullException("propertyDescriptions");
+                throw new ArgumentNullException(nameof(propertyDescriptions));
             }
             if (propertyNode == null)
             {
-                throw new ArgumentNullException("propertyNode");
+                throw new ArgumentNullException(nameof(propertyNode));
             }
 
             var propertyName = SearchProperty(propertyNode, MetadataParameters.Name);
@@ -145,11 +145,11 @@ namespace TemplateGenerator.Builder
         {
             if (node == null)
             {
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
             }
             if (property == null)
             {
-                throw new ArgumentNullException("property");
+                throw new ArgumentNullException(nameof(property));
             }
 
             try
@@ -166,7 +166,7 @@ namespace TemplateGenerator.Builder
                 {
                     var attribute = childNode.Attributes["value"];
 
-                    return attribute == null ? null : attribute.Value;
+                    return attribute?.Value;
                 }
             }
             catch (Exception ex)

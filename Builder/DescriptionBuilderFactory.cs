@@ -26,7 +26,7 @@ namespace TemplateGenerator.Builder
         /// <summary>
         /// Gets or sets builders (either defined or built).
         /// </summary>
-        public IDictionary<Type, Func<object>> Builders { get; private set; }
+        public IDictionary<Type, Func<object>> Builders { get; }
 
         /// <summary>
         /// Gets and sequence of builders.

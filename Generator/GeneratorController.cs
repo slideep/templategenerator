@@ -25,10 +25,7 @@ namespace TemplateGenerator.Generator
         /// <summary>
         /// Gets an list of available template implementations (derived from <see cref="TemplateBase"/>).
         /// </summary>
-        public static IList<TemplateBase> Templates
-        {
-            get { return new List<TemplateBase>(TemplateStorage.Instance.Templates.Values); }
-        }
+        public static IList<TemplateBase> Templates => new List<TemplateBase>(TemplateStorage.Instance.Templates.Values);
 
         /// <summary>
         /// Gets and builds an dictionary of templates. 
@@ -72,11 +69,11 @@ namespace TemplateGenerator.Generator
         {
             if (description == null)
             {
-                throw new ArgumentNullException("description");
+                throw new ArgumentNullException(nameof(description));
             }
             if (templateName == null)
             {
-                throw new ArgumentNullException("templateName");
+                throw new ArgumentNullException(nameof(templateName));
             }
 
             TemplateBase template;

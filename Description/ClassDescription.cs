@@ -14,11 +14,11 @@ namespace TemplateGenerator.Description
         {
             if (name == null)
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
             if (description == null)
             {
-                throw new ArgumentNullException("description");
+                throw new ArgumentNullException(nameof(description));
             }
 
             Name = name;
@@ -35,24 +35,15 @@ namespace TemplateGenerator.Description
 
         public bool IsDataAccessClass { get; set; }
 
-        public string BuildSqlSelect
-        {
-            get { return Builder.BuildSql(TableName, SqlBuilderOperationTypes.Select); }
-        }
+        public string BuildSqlSelect => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Select);
 
-        public string BuildSqlUpdate
-        {
-            get { return Builder.BuildSql(TableName, SqlBuilderOperationTypes.Update); }
-        }
+        public string BuildSqlUpdate => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Update);
 
-        public string BuildSqlInsert
-        {
-            get { return Builder.BuildSql(TableName, SqlBuilderOperationTypes.Insert); }
-        }
+        public string BuildSqlInsert => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Insert);
 
         public ReadOnlyCollection<OperationDescription> Operations { get; private set; }
 
-        public SqlBuilder Builder { get; private set; }
+        public SqlBuilder Builder { get; }
 
         #region IDescription Members
 
@@ -79,7 +70,7 @@ namespace TemplateGenerator.Description
         /// <summary>
         /// Gets an read-only collection of template's defined property descriptions.
         /// </summary>
-        public ReadOnlyCollection<IPropertyDescription> Properties { get; private set; }
+        public ReadOnlyCollection<IPropertyDescription> Properties { get; }
 
         #endregion
 

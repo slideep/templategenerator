@@ -23,7 +23,7 @@ namespace TemplateGenerator.Description
         {
             if (name == null)
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             Name = name;
@@ -56,10 +56,7 @@ namespace TemplateGenerator.Description
         /// <summary>
         /// Gets an read-only collection of template's defined property descriptions.
         /// </summary>
-        public ReadOnlyCollection<IPropertyDescription> Properties
-        {
-            get { return Enumerable.Empty<IPropertyDescription>().ToList().AsReadOnly(); }
-        }
+        public ReadOnlyCollection<IPropertyDescription> Properties => Enumerable.Empty<IPropertyDescription>().ToList().AsReadOnly();
 
         /// <summary>
         /// Gets or sets the datatype of the property.

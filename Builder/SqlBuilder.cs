@@ -31,10 +31,7 @@ namespace TemplateGenerator.Builder
         /// <summary>
         /// Gets the data parameters.
         /// </summary>
-        public IDictionary<string, IDataParameter> Parameters
-        {
-            get { return null; }
-        }
+        public IDictionary<string, IDataParameter> Parameters => null;
 
         /// <summary>
         /// Fetches the named and value given <see cref="IDataParameter"/> implementation.
@@ -47,7 +44,7 @@ namespace TemplateGenerator.Builder
         {
             if (parameterName == null)
             {
-                throw new ArgumentNullException("parameterName");
+                throw new ArgumentNullException(nameof(parameterName));
             }
 
             return null;
@@ -94,7 +91,7 @@ namespace TemplateGenerator.Builder
         {
             if (columns == null)
             {
-                throw new ArgumentNullException("columns");
+                throw new ArgumentNullException(nameof(columns));
             }
 
             return
@@ -106,7 +103,7 @@ namespace TemplateGenerator.Builder
         {
             if (columns == null)
             {
-                throw new ArgumentNullException("columns");
+                throw new ArgumentNullException(nameof(columns));
             }
 
             ColumnNames =
@@ -120,9 +117,6 @@ namespace TemplateGenerator.Builder
         /// <summary>
         /// Gets the database name.
         /// </summary>
-        public string DatabaseName
-        {
-            get { return string.Empty; }
-        }
+        public string DatabaseName => string.Empty;
     }
 }

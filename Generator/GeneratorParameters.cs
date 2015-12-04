@@ -30,7 +30,7 @@ namespace TemplateGenerator.Generator
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             return other.Equals(this);

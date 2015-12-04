@@ -30,7 +30,7 @@ namespace TemplateGenerator.Builder
         {
             if (xml == null)
             {
-                throw new ArgumentNullException("xml");
+                throw new ArgumentNullException(nameof(xml));
             }
 
             using (var reader = new StringReader(xml))
@@ -71,11 +71,11 @@ namespace TemplateGenerator.Builder
         {
             if (templateNode == null)
             {
-                throw new ArgumentNullException("templateNode");
+                throw new ArgumentNullException(nameof(templateNode));
             }
             if (propertyDescription == null)
             {
-                throw new ArgumentNullException("propertyDescription");
+                throw new ArgumentNullException(nameof(propertyDescription));
             }
 
             var propertyDescriptions = new Collection<PropertyDescription>();
@@ -117,7 +117,7 @@ namespace TemplateGenerator.Builder
         {
             if (propertyNode == null)
             {
-                throw new ArgumentNullException("propertyNode");
+                throw new ArgumentNullException(nameof(propertyNode));
             }
             
             // TODO: fix hardcoded value or provide a better way to get enum's stringified value

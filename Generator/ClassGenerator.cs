@@ -11,7 +11,7 @@ namespace TemplateGenerator.Generator
         {
             if (template == null)
             {
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
             }
 
             GeneratedTemplate = template;
@@ -22,25 +22,25 @@ namespace TemplateGenerator.Generator
             SovitusParametriPohja = GeneratedTemplate.SovitusParameterTemplate;
         }
 
-        public string ParameterTemplate { get; private set; }
+        public string ParameterTemplate { get; }
 
-        protected string SovitusParametriPohja { get; set; }
+        protected string SovitusParametriPohja { get; }
 
-        protected TemplateDescriptionTypes DescriptionTypes { get; set; }
+        protected TemplateDescriptionTypes DescriptionTypes { get; }
 
-        protected TemplateBase GeneratedTemplate { get; set; }
+        protected TemplateBase GeneratedTemplate { get; }
 
         #region IGenerator Members
 
         /// <summary>
         /// Gets the class template text.
         /// </summary>
-        public string ClassTemplate { get; private set; }
+        public string ClassTemplate { get; }
 
         /// <summary>
         /// Gets the property template text.
         /// </summary>
-        public string PropertyTemplate { get; private set; }
+        public string PropertyTemplate { get; }
 
         /// <summary>
         /// Gets the generated template text based on <see cref="IDescription"/> implementation.
@@ -52,7 +52,7 @@ namespace TemplateGenerator.Generator
         {
             if (description == null)
             {
-                throw new ArgumentNullException("description");
+                throw new ArgumentNullException(nameof(description));
             }
 
             var classTemplateString = ClassTemplate;
@@ -93,7 +93,7 @@ namespace TemplateGenerator.Generator
         {
             if (description == null)
             {
-                throw new ArgumentNullException("description");
+                throw new ArgumentNullException(nameof(description));
             }
 
             var parameters = new StringBuilder();
@@ -112,7 +112,7 @@ namespace TemplateGenerator.Generator
         {
             if (description == null)
             {
-                throw new ArgumentNullException("description");
+                throw new ArgumentNullException(nameof(description));
             }
 
             var parameters = new StringBuilder();
@@ -145,11 +145,11 @@ namespace TemplateGenerator.Generator
             return parameters;
         }
 
-        public StringBuilder CreateProperties(ClassDescription description)
+        private StringBuilder CreateProperties(ClassDescription description)
         {
             if (description == null)
             {
-                throw new ArgumentNullException("description");
+                throw new ArgumentNullException(nameof(description));
             }
 
             var properties = new StringBuilder();
@@ -177,7 +177,7 @@ namespace TemplateGenerator.Generator
         {
             if (description == null)
             {
-                throw new ArgumentNullException("description");
+                throw new ArgumentNullException(nameof(description));
             }
 
             parameterString =

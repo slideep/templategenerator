@@ -20,7 +20,7 @@ namespace TemplateGenerator.Template
         {
             if (xmlDoc == null)
             {
-                throw new ArgumentNullException("xmlDoc");
+                throw new ArgumentNullException(nameof(xmlDoc));
             }
 
             if (xmlDoc.Root != null)
@@ -32,100 +32,67 @@ namespace TemplateGenerator.Template
         /// <summary>
         /// Gets or sets the root node of template's description.
         /// </summary>
-        public XElement Node { get; set; }
+        public XElement Node { get; }
 
         /// <summary>
         /// Gets the metadata type information (one of the following: Attribute | Class | Element | Operation | Xml).
         /// </summary>
-        public MetadataTypes MetadataType
-        {
-            get { return GetMetadataType(MetadataTypeString); }
-        }
+        public MetadataTypes MetadataType => GetMetadataType(MetadataTypeString);
 
         /// <summary>
         /// Gets (searches) the metadata type as a string value.
         /// </summary>
-        private string MetadataTypeString
-        {
-            get { return SearchProperty(Node, MetadataParameters.MetaInformation); }
-        }
+        private string MetadataTypeString => SearchProperty(Node, MetadataParameters.MetaInformation);
 
         /// <summary>
         /// Gets the name of the metadata type (used to describe class's or maybe XML-element's name).
         /// </summary>
-        public string Name
-        {
-            get { return SearchProperty(Node, MetadataParameters.Name); }
-        }
+        public string Name => SearchProperty(Node, MetadataParameters.Name);
 
         /// <summary>
         /// Gets the description of the metadata type (used to describe XML-documentation).
         /// </summary>
-        public string Description
-        {
-            get { return SearchProperty(Node, MetadataParameters.Description); }
-        }
+        public string Description => SearchProperty(Node, MetadataParameters.Description);
 
         /// <summary>
         /// Gets the template description type which is about to be generated or templated.
         /// </summary>
-        public TemplateDescriptionTypes ClassTypes
-        {
-            get { return GetClassDescriptionType(ClassTypeString); }
-        }
+        public TemplateDescriptionTypes ClassTypes => GetClassDescriptionType(ClassTypeString);
 
         /// <summary>
         /// Gets the class type which is about to be generated or templated.
         /// </summary>
-        private string ClassTypeString
-        {
-            get { return SearchProperty(Node, MetadataParameters.ClassType); }
-        }
+        private string ClassTypeString => SearchProperty(Node, MetadataParameters.ClassType);
 
         /// <summary>
         /// Gets the table or collection name where to be generated or templated data is fetched.
         /// </summary>
-        public string TableName
-        {
-            get { return SearchProperty(Node, MetadataParameters.TableName); }
-        }
+        public string TableName => SearchProperty(Node, MetadataParameters.TableName);
 
         /// <summary>
         /// Gets the event type.
         /// </summary>
-        public string EventType
-        {
-            get { return SearchProperty(Node, MetadataParameters.EventType); }
-        }
+        public string EventType => SearchProperty(Node, MetadataParameters.EventType);
 
         /// <summary>
         /// Gets the namespace (<see cref="MetadataTypes"/> is usually set to <see cref="MetadataTypes.Xml"/>.
         /// </summary>
-        public string Namespace
-        {
-            get { return SearchProperty(Node, MetadataParameters.Namespace); }
-        }
+        public string Namespace => SearchProperty(Node, MetadataParameters.Namespace);
 
         /// <summary>
         /// Gets the visibility for the operation or property.
         /// </summary>
-        public string Visibility
-        {
-            get { return SearchProperty(Node, MetadataParameters.Visibility); }
-        }
+        public string Visibility => SearchProperty(Node, MetadataParameters.Visibility);
 
         /// <summary>
         /// Gets the default value assigned to the property or operation return value.
         /// </summary>
-        public string DefaultValue
-        {
-            get { return SearchProperty(Node, MetadataParameters.DefaultValue); }
-        }
+        public string DefaultValue => SearchProperty(Node, MetadataParameters.DefaultValue);
 
         private static MetadataTypes GetMetadataType(string metadataType)
         {
             if (metadataType == null)
-                throw new ArgumentNullException("metadataType");
+                throw new ArgumentNullException(nameof(metadataType));
 
             return (MetadataTypes)Enum.Parse(typeof(MetadataTypes), metadataType, true);
         }
@@ -133,7 +100,7 @@ namespace TemplateGenerator.Template
         private static TemplateDescriptionTypes GetClassDescriptionType(string classDescriptionType)
         {
             if (classDescriptionType == null)
-                throw new ArgumentNullException("classDescriptionType");
+                throw new ArgumentNullException(nameof(classDescriptionType));
 
             return (TemplateDescriptionTypes)Enum.Parse(typeof(TemplateDescriptionTypes), classDescriptionType, true);
         }
@@ -149,11 +116,11 @@ namespace TemplateGenerator.Template
         {
             if (node == null)
             {
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
             }
             if (property == null)
             {
-                throw new ArgumentNullException("property");
+                throw new ArgumentNullException(nameof(property));
             }
 
             return
