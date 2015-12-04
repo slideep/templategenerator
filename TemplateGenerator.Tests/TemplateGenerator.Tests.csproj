@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TemplateGenerator.Tests</RootNamespace>
     <AssemblyName>TemplateGenerator.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.3</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TestProjectType>UnitTest</TestProjectType>
@@ -64,7 +64,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Builder\DescriptionBuilderFactoryTest.cs" />
-    <Compile Include="Common\UnitTest1.cs" />
     <Compile Include="Description\ClassDescriptionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -80,7 +79,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Common\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Template\ClassTemplateExample.xml" />
   </ItemGroup>

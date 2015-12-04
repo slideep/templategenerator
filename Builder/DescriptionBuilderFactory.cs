@@ -23,8 +23,6 @@ namespace TemplateGenerator.Builder
             Builders = new Dictionary<Type, Func<object>>();
         }
 
-        private static readonly object SyncObject = new object();
-
         /// <summary>
         /// Gets or sets builders (either defined or built).
         /// </summary>
@@ -58,7 +56,7 @@ namespace TemplateGenerator.Builder
         {
             if (customization == null)
             {
-                throw new ArgumentNullException("customization");
+                throw new ArgumentNullException(nameof(customization));
             }
 
             var result = Builders[typeof(TBuilder)]() as TBuilder;
@@ -85,7 +83,7 @@ namespace TemplateGenerator.Builder
         {
             if (builder == null)
             {
-                throw new ArgumentNullException("builder");
+                throw new ArgumentNullException(nameof(builder));
             }
             if (Builders.ContainsKey(typeof(TBuilder)))
             {
@@ -96,7 +94,7 @@ namespace TemplateGenerator.Builder
             {
                 throw new ArgumentException(
                     "A builder doesn't inherit from '" + typeof(DescriptionBuilderBase<TNodeType>).Name + "'.",
-                    "builder");
+                    nameof(builder));
             }
 
             lock (Builders)

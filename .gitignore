@@ -24,3 +24,4 @@ Thumbs.db
 
 # ReSharper files #
 _ReSharper.TemplateGenerator*
+*.cache
