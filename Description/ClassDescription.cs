@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TemplateGenerator.Builder;
 
 namespace TemplateGenerator.Description;
 
@@ -27,20 +26,11 @@ public class ClassDescription : IDescription
         IsDataAccessClass = isDataAccessClass;
         TableName = tableName;
         FileFullPath = fileFullPath;
-        Builder = new SqlBuilder();
     }
 
     public bool IsDataAccessClass { get; }
 
-    public string BuildSqlSelect => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Select);
-
-    public string BuildSqlUpdate => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Update);
-
-    public string BuildSqlInsert => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Insert);
-
     public IReadOnlyList<OperationDescription> Operations { get; }
-
-    public SqlBuilder Builder { get; }
 
     /// <summary>
     /// Gets or sets the template file's used data storage's table or collection name.

@@ -50,7 +50,7 @@ namespace TemplateGenerator.Builder;
 
             if (meta.Node == null)
             {
-                return null;
+                throw TemplateParseException.MissingRootNode();
             }
 
             if (meta.MetadataType != MetadataTypes.Xml)
@@ -93,14 +93,14 @@ namespace TemplateGenerator.Builder;
                 return Enumerable.Empty<PropertyDescription>();
             }
 
-            foreach (var propertyNode in propertyNodes.TakeWhile(HasElement))
+            foreach (var propertyNode in propertyNodes)
             {
-                var elementName = TemplateMetadata.SearchProperty(propertyNode, MetadataParameters.Name);
-
-                if (elementName == null)
+                if (!HasElement(propertyNode))
                 {
                     continue;
                 }
+
+                var elementName = TemplateMetadata.SearchProperty(propertyNode, MetadataParameters.Name);
 
                 var description = new PropertyDescription(elementName, string.Empty, string.Empty);
 

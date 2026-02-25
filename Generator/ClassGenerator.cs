@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using TemplateGenerator.Description;
 using TemplateGenerator.Template;
@@ -6,7 +7,7 @@ using TemplateGenerator.Template;
 namespace TemplateGenerator.Generator;
     internal class ClassGenerator : IGenerator
     {
-        public ClassGenerator(TemplateBase template)
+        public ClassGenerator(TemplateAsset template)
         {
             ArgumentNullException.ThrowIfNull(template);
 
@@ -24,7 +25,7 @@ namespace TemplateGenerator.Generator;
 
         protected TemplateDescriptionTypes DescriptionTypes { get; }
 
-        protected TemplateBase GeneratedTemplate { get; }
+        protected TemplateAsset GeneratedTemplate { get; }
 
         #region IGenerator Members
 
@@ -59,13 +60,13 @@ namespace TemplateGenerator.Generator;
                 if (classDescription.IsDataAccessClass)
                 {
                     classTemplateString = classTemplateString.Replace(MetadataParameters.TableNameName,
-                                                                      classDescription.TableName);
+                                                                      classDescription.TableName ?? string.Empty);
                     classTemplateString = classTemplateString.Replace(MetadataParameters.SelectSqlName,
-                                                                      classDescription.BuildSqlSelect);
+                                                                      BuildSqlSelect(classDescription));
                     classTemplateString = classTemplateString.Replace(MetadataParameters.InsertSqlName,
-                                                                      classDescription.BuildSqlInsert);
+                                                                      BuildSqlInsert(classDescription));
                     classTemplateString = classTemplateString.Replace(MetadataParameters.UpdateSqlName,
-                                                                      classDescription.BuildSqlUpdate);
+                                                                      BuildSqlUpdate(classDescription));
                     classTemplateString = classTemplateString.Replace(MetadataParameters.ParametersName,
                                                                       CreateParameters(classDescription).ToString());
                 }
@@ -87,7 +88,7 @@ namespace TemplateGenerator.Generator;
 
             var parameters = new StringBuilder();
 
-            foreach (var parameterName in description.Builder.ColumnNames)
+            foreach (var parameterName in GetColumnNames(description))
             {
                 var parameterString = SovitusParametriPohja;
                 parameterString = GetParameterString(description, parameterString, parameterName);
@@ -103,7 +104,7 @@ namespace TemplateGenerator.Generator;
 
             var parameters = new StringBuilder();
 
-            foreach (var parameterName in description.Builder.ColumnNames)
+            foreach (var parameterName in GetColumnNames(description))
             {
                 var parameterString = ParameterTemplate;
 
@@ -167,9 +168,77 @@ namespace TemplateGenerator.Generator;
 
         private static string ToUpperLeadingAndTail(string value)
         {
-            return string.Concat(
-                value.Substring(0, 1).ToUpperInvariant(),
-                value.Substring(1, value.Length - 1).ToUpperInvariant());
+            ArgumentException.ThrowIfNullOrWhiteSpace(value);
+
+            return value.Length == 1
+                ? value.ToUpperInvariant()
+                : string.Concat(value[0].ToString().ToUpperInvariant(), value.AsSpan(1));
+        }
+
+        private static string[] GetColumnNames(ClassDescription description)
+        {
+            ArgumentNullException.ThrowIfNull(description);
+
+            return description.Properties
+                .Select(property => property.Name)
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
+        }
+
+        private static string BuildSqlSelect(ClassDescription description)
+        {
+            var tableName = description.TableName;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                return string.Empty;
+            }
+
+            var columns = JoinColumnsOrWildcard(description);
+            return $"\"SELECT {columns} FROM {tableName}\"";
+        }
+
+        private static string BuildSqlInsert(ClassDescription description)
+        {
+            var tableName = description.TableName;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                return string.Empty;
+            }
+
+            var columnNames = GetColumnNames(description);
+            if (columnNames.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var columns = string.Join(",", columnNames);
+            var parameters = string.Join(",", columnNames.Select(static name => $":{name}"));
+            return $"\"INSERT INTO {tableName} ({columns}) VALUES ({parameters})\"";
+        }
+
+        private static string BuildSqlUpdate(ClassDescription description)
+        {
+            var tableName = description.TableName;
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                return string.Empty;
+            }
+
+            var columnNames = GetColumnNames(description);
+            if (columnNames.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var assignments = string.Join(",", columnNames.Select(static name => $"{name} = :{name}"));
+            return $"\"UPDATE {tableName} SET {assignments}\"";
+        }
+
+        private static string JoinColumnsOrWildcard(ClassDescription description)
+        {
+            var columnNames = GetColumnNames(description);
+            return columnNames.Length == 0 ? "*" : string.Join(",", columnNames);
         }
 
         #endregion

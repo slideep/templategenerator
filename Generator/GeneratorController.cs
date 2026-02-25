@@ -14,16 +14,25 @@ namespace TemplateGenerator.Generator;
     {
         private IDictionary<string, IDescription>? _descriptions;
         private readonly string _templateDirectory;
+        private readonly ITemplateRegistry _templateRegistry;
+        private readonly TemplateGeneratorService _templateGeneratorService;
         private readonly object _descriptionsLock = new();
 
         public GeneratorController()
-            : this(new TemplateGeneratorOptions())
+            : this(new TemplateGeneratorOptions(), TemplateRegistry.Default)
         {
         }
 
         public GeneratorController(TemplateGeneratorOptions options)
+            : this(options, TemplateRegistry.Default)
+        {
+        }
+
+        public GeneratorController(TemplateGeneratorOptions options, ITemplateRegistry templateRegistry)
         {
             options ??= new TemplateGeneratorOptions();
+            _templateRegistry = templateRegistry ?? throw new ArgumentNullException(nameof(templateRegistry));
+            _templateGeneratorService = new TemplateGeneratorService(_templateRegistry);
 
             if (string.IsNullOrWhiteSpace(options.TemplateDirectory))
             {
@@ -40,9 +49,13 @@ namespace TemplateGenerator.Generator;
             => [..TemplateNamesDescriptions.Values];
 
         /// <summary>
-        /// Gets an list of available template implementations (derived from <see cref="TemplateBase"/>).
+        /// Gets an list of available template assets from the default registry.
         /// </summary>
-        public static IList<TemplateBase> Templates => new List<TemplateBase>(TemplateStorage.Instance.Templates.Values);
+        public static IList<TemplateAsset> Templates => [.. TemplateRegistry.Default.Assets];
+
+        public static IList<TemplateAssetDescriptor> TemplateDescriptors => [.. TemplateRegistry.Default.Descriptors];
+
+        public ITemplateRegistry RegisteredTemplateRegistry => _templateRegistry;
 
         /// <summary>
         /// Gets and builds an dictionary of templates. 
@@ -83,12 +96,19 @@ namespace TemplateGenerator.Generator;
         /// <returns>Generated template's description (a class, interface, XML-file etc.) or null.</returns>
         public static string? GenerateDescription(IDescription description, string templateName)
         {
-            ArgumentNullException.ThrowIfNull(description);
-            ArgumentNullException.ThrowIfNull(templateName);
-
-            return TemplateStorage.Instance.Templates.TryGetValue(templateName, out var template)
-                ? new ClassGenerator(template).Generate(description)
-                : null;
+            return new TemplateGeneratorService(TemplateRegistry.Default).GenerateDescription(description, templateName);
         }
+
+        public string? Generate(IDescription description, string templateName)
+            => _templateGeneratorService.GenerateDescription(description, templateName);
+
+        public static void RegisterTemplate(TemplateAsset template)
+            => TemplateRegistry.Default.Register(template);
+
+        public static void LoadTemplates(ITemplateAssetProvider provider)
+            => TemplateRegistry.Default.LoadFrom(provider);
+
+        public static void ClearTemplates()
+            => TemplateRegistry.Default.Clear();
     }
  

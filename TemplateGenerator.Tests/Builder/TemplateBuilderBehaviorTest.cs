@@ -58,6 +58,61 @@ public class TemplateBuilderBehaviorTest
     }
 
     [Fact]
+    public void XmlDescriptionBuilderThrowsStructuredErrorWhenClassNodeIsMissing()
+    {
+        var tempDirectory = CreateTempDirectory();
+
+        try
+        {
+            var templatePath = Path.Combine(tempDirectory, "MissingXmlClassNode.xml");
+            File.WriteAllText(
+                templatePath,
+                """
+                <?xml version="1.0" encoding="utf-8"?>
+                <classTemplate version="0.1">
+                  <notClass />
+                </classTemplate>
+                """);
+
+            var builder = new XmlDescriptionBuilder(tempDirectory);
+
+            var exception = Assert.Throws<TemplateParseException>(() => _ = builder.BuiltTemplates);
+
+            Assert.Equal(TemplateParseErrorCode.MissingRootNode, exception.ErrorCode);
+            Assert.Equal(templatePath, exception.FileFullPath);
+        }
+        finally
+        {
+            Directory.Delete(tempDirectory, true);
+        }
+    }
+
+    [Fact]
+    public void XmlDescriptionBuilderDoesNotStopAtFirstNonElementPropertyDescription()
+    {
+        var tempDirectory = CreateTempDirectory();
+
+        try
+        {
+            var templatePath = Path.Combine(tempDirectory, "XmlMixedPropertyDescriptions.xml");
+            File.WriteAllText(templatePath, BuildXmlTemplateWithMixedPropertyDescriptions());
+
+            var builder = new XmlDescriptionBuilder(tempDirectory);
+
+            var description = Assert.IsType<XmlDescription>(Assert.Single(builder.BuiltTemplates.Values));
+
+            Assert.Collection(
+                description.Properties,
+                property => Assert.Equal("Code", property.Name),
+                property => Assert.Equal("Name", property.Name));
+        }
+        finally
+        {
+            Directory.Delete(tempDirectory, true);
+        }
+    }
+
+    [Fact]
     public void ClassDescriptionBuilderThrowsStructuredErrorWhenRequiredClassPropertyElementIsMissing()
     {
         var tempDirectory = CreateTempDirectory();
@@ -254,6 +309,34 @@ public class TemplateBuilderBehaviorTest
                 <propertyDescription>
                   <property name="$metainformation" value="Element" />
                   <property name="$name" value="Code" />
+                </propertyDescription>
+              </class>
+            </classTemplate>
+            """;
+    }
+
+    private static string BuildXmlTemplateWithMixedPropertyDescriptions()
+    {
+        return """
+            <?xml version="1.0" encoding="utf-8"?>
+            <classTemplate version="0.1">
+              <class>
+                <property name="$metainformation" value="Xml" />
+                <property name="$name" value="AirportFeed" />
+                <property name="$description" value="Airport feed." />
+                <property name="$tablename" value="airports" />
+                <property name="$namespace" value="urn:test:airports" />
+                <propertyDescription>
+                  <property name="$metainformation" value="Element" />
+                  <property name="$name" value="Code" />
+                </propertyDescription>
+                <propertyDescription>
+                  <property name="$metainformation" value="Attribute" />
+                  <property name="$name" value="Ignored" />
+                </propertyDescription>
+                <propertyDescription>
+                  <property name="$metainformation" value="Element" />
+                  <property name="$name" value="Name" />
                 </propertyDescription>
               </class>
             </classTemplate>
