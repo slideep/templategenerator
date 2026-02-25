@@ -1,10 +1,10 @@
-namespace TemplateGenerator.Template
+namespace TemplateGenerator.Template;
+
+/// <summary>
+/// Contains constant values for template token placeholders.
+/// </summary>
+public static class MetadataParameters
 {
-    /// <summary>
-    /// Contains constant values for template token placeholders.
-    /// </summary>
-    public static class MetadataParameters
-    {
         /// <summary>
         /// Default token for $name.
         /// </summary>
@@ -144,5 +144,4 @@ namespace TemplateGenerator.Template
         /// Default token for @sovitusParametri@.
         /// </summary>
         public const string SovitusParametriName = "@sovitusParametri@";
-    }
 }

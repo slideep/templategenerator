@@ -12,7 +12,7 @@ namespace TemplateGenerator.Tests.Description
     /// </summary>
     public class ClassDescriptionTest
     {
-        private Mock<IDescription> _moqDescription;
+        private Mock<IDescription> _moqDescription = null!;
 
         /// <summary>
         /// Gets the read-only collection of one <see cref="PropertyDescriptionPositive"/> instances.
@@ -37,7 +37,7 @@ namespace TemplateGenerator.Tests.Description
             get
             {
                 return
-                    new IPropertyDescription[] {new PropertyDescription(null, "Description", "string")}.ToList().
+                    new IPropertyDescription[] {new PropertyDescription(null!, "Description", "string")}.ToList().
                         AsReadOnly();
             }
         }
@@ -140,8 +140,8 @@ namespace TemplateGenerator.Tests.Description
             // Act
 
             // Assert
-            Assert.Throws(typeof(ArgumentNullException),
-                          () => _moqDescription.SetupGet(d => d.Properties).Returns(PropertyDescriptionNegative));
+            Assert.Throws<ArgumentNullException>(
+                () => _moqDescription.SetupGet(d => d.Properties).Returns(PropertyDescriptionNegative));
         }
 
 

@@ -1,109 +1,89 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using TemplateGenerator.Builder;
 
-namespace TemplateGenerator.Description
+namespace TemplateGenerator.Description;
+
+[Serializable]
+public class ClassDescription : IDescription
 {
-    [Serializable]
-    public class ClassDescription : IDescription
+    public ClassDescription(
+        string name,
+        string description,
+        IEnumerable<IPropertyDescription>? properties,
+        IReadOnlyList<OperationDescription>? operations,
+        bool isDataAccessClass = false,
+        string? tableName = null,
+        string? fileFullPath = null)
     {
-        public ClassDescription(string name, string description, IEnumerable<IPropertyDescription> properties,
-                                ReadOnlyCollection<OperationDescription> operations)
-        {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (description == null)
-            {
-                throw new ArgumentNullException(nameof(description));
-            }
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(description);
 
-            Name = name;
-            Description = description;
-
-            if (properties != null)
-            {
-                Properties = new ReadOnlyCollection<IPropertyDescription>(properties.ToList());
-            }
-
-            Operations = operations;
-            Builder = new SqlBuilder();
-        }
-
-        public bool IsDataAccessClass { get; set; }
-
-        public string BuildSqlSelect => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Select);
-
-        public string BuildSqlUpdate => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Update);
-
-        public string BuildSqlInsert => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Insert);
-
-        public ReadOnlyCollection<OperationDescription> Operations { get; private set; }
-
-        public SqlBuilder Builder { get; }
-
-        #region IDescription Members
-
-        /// <summary>
-        /// Gets or sets the template file's used data storage's table or collection name.
-        /// </summary>
-        public string TableName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template file's name (usually a class or XM-element name etc.).
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template file's description (or summary for XML-documentation).
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template file's full path.
-        /// </summary>
-        public string FileFullPath { get; set; }
-
-        /// <summary>
-        /// Gets an read-only collection of template's defined property descriptions.
-        /// </summary>
-        public ReadOnlyCollection<IPropertyDescription> Properties { get; }
-
-        #endregion
-
-        #region Implementation of IComparable<in IDescription>
-
-        /// <summary>
-        /// Compares the current object with another object of the same type.
-        /// </summary>
-        /// <returns>
-        /// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>. 
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public int CompareTo(IDescription other)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region Implementation of IEquatable<IDescription>
-
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <returns>
-        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public bool Equals(IDescription other)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
+        Name = name;
+        Description = description;
+        Properties = properties?.ToArray() ?? Array.Empty<IPropertyDescription>();
+        Operations = operations ?? Array.Empty<OperationDescription>();
+        IsDataAccessClass = isDataAccessClass;
+        TableName = tableName;
+        FileFullPath = fileFullPath;
+        Builder = new SqlBuilder();
     }
+
+    public bool IsDataAccessClass { get; }
+
+    public string BuildSqlSelect => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Select);
+
+    public string BuildSqlUpdate => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Update);
+
+    public string BuildSqlInsert => Builder.BuildSql(TableName, SqlBuilderOperationTypes.Insert);
+
+    public IReadOnlyList<OperationDescription> Operations { get; }
+
+    public SqlBuilder Builder { get; }
+
+    /// <summary>
+    /// Gets or sets the template file's used data storage's table or collection name.
+    /// </summary>
+    public string? TableName { get; }
+
+    /// <summary>
+    /// Gets the template file's name (usually a class or XML-element name etc.).
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
+    /// Gets the template file's description (or summary for XML-documentation).
+    /// </summary>
+    public string Description { get; }
+
+    /// <summary>
+    /// Gets or sets the template file's full path.
+    /// </summary>
+    public string? FileFullPath { get; }
+
+    /// <summary>
+    /// Gets a read-only collection of template-defined property descriptions.
+    /// </summary>
+    public IReadOnlyList<IPropertyDescription> Properties { get; }
+
+    public int CompareTo(IDescription? other)
+    {
+        if (other is null)
+        {
+            return 1;
+        }
+
+        return StringComparer.Ordinal.Compare(Name, other.Name);
+    }
+
+    public bool Equals(IDescription? other)
+    {
+        return other is ClassDescription classDescription &&
+               StringComparer.Ordinal.Equals(Name, classDescription.Name);
+    }
+
+    public override bool Equals(object? obj) => obj is IDescription other && Equals(other);
+
+    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Name);
 }

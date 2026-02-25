@@ -1,13 +1,13 @@
 using System;
 
-namespace TemplateGenerator.Builder
+namespace TemplateGenerator.Builder;
+
+/// <summary>
+/// Enumeration types for SQL builder operations.
+/// </summary>
+[Flags]
+public enum SqlBuilderOperationTypes
 {
-    /// <summary>
-    /// Enumeration types for SQL builder operations.
-    /// </summary>
-	[Flags]
-    public enum SqlBuilderOperationTypes
-    {
         /// <summary>
         /// None (probably an error)
         /// </summary>
@@ -31,6 +31,5 @@ namespace TemplateGenerator.Builder
         /// <summary>
         /// SQL DELETE - clause operation
         /// </summary>
-		Delete = 8
-    }
+    Delete = 8
 }

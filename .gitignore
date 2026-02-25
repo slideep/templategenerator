@@ -8,8 +8,10 @@
 *.class
 *.dll
 *.exe
-bin*
-obj*	
+bin/
+obj/
+**/bin/
+**/obj/
 packages*
 
 # Logs and databases #

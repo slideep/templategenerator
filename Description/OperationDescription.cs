@@ -1,88 +1,66 @@
 using System;
 using System.Collections.Generic;
 
-namespace TemplateGenerator.Description
+namespace TemplateGenerator.Description;
+
+/// <summary>
+/// Represents a description of an operation.
+/// </summary>
+[Serializable]
+public class OperationDescription
 {
-    /// <summary>
-    /// Represents an description of an operation.
-    /// </summary>
-    [Serializable]
-    public class OperationDescription
+    public OperationDescription(
+        string name,
+        string? description,
+        string? returnType,
+        IReadOnlyDictionary<string, Type>? parameters)
     {
-        public OperationDescription(string name, string description, string returnType,
-                                    IDictionary<string, Type> parameters)
-        {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+        ArgumentNullException.ThrowIfNull(name);
 
-            Name = name;
-            Description = description;
-            ReturnDataType = returnType;
-            Parameters = parameters;
-        }
-
-        /// <summary>
-        /// Gets or sets the parameters for the operation (a dictionary containing names and types).
-        /// </summary>
-        public IDictionary<string, Type> Parameters { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the name of the operation.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the description of the XML-documentation.
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or sets the return datatype of the operation.
-        /// </summary>
-        public string ReturnDataType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the visibility of the operation.
-        /// </summary>
-        public string Visibility { get; set; }
-
-        /// <summary>
-        /// Gets or sets the datatype of the operation.
-        /// </summary>
-        public string DotNetDataType
-        {
-            get
-            {
-                switch (ReturnDataType)
-                {
-                    case "void":
-                        return "void";
-                    case "Long":
-                    case "long":
-                        return "long";
-                    case "Double":
-                        return "decimal";
-                    case "decimal":
-                    case "Decimal":
-                        return "decimal";
-                    case "Integer":
-                    case "int":
-                        return "int";
-                    case "String":
-                    case "string":
-                        return "string";
-                    case "Date":
-                    case "DateTime":
-                        return "DateTime";
-                    case "bool":
-                    case "Boolean":
-                        return "bool";
-                    default:
-                        return ReturnDataType;
-                }
-            }
-        }
+        Name = name;
+        Description = description ?? string.Empty;
+        ReturnDataType = returnType ?? string.Empty;
+        Parameters = parameters ?? new Dictionary<string, Type>();
     }
+
+    /// <summary>
+    /// Gets the parameters for the operation (a dictionary containing names and types).
+    /// </summary>
+    public IReadOnlyDictionary<string, Type> Parameters { get; }
+
+    /// <summary>
+    /// Gets the name of the operation.
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
+    /// Gets the description of the XML-documentation.
+    /// </summary>
+    public string Description { get; }
+
+    /// <summary>
+    /// Gets the return datatype of the operation.
+    /// </summary>
+    public string ReturnDataType { get; }
+
+    /// <summary>
+    /// Gets or sets the visibility of the operation.
+    /// </summary>
+    public string? Visibility { get; set; }
+
+    /// <summary>
+    /// Gets the datatype of the operation.
+    /// </summary>
+    public string DotNetDataType => ReturnDataType switch
+    {
+        "void" => "void",
+        "Long" or "long" => "long",
+        "Double" => "decimal",
+        "decimal" or "Decimal" => "decimal",
+        "Integer" or "int" => "int",
+        "String" or "string" => "string",
+        "Date" or "DateTime" => "DateTime",
+        "bool" or "Boolean" => "bool",
+        _ => ReturnDataType
+    };
 }

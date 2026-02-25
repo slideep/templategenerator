@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TemplateGenerator.Template;
 
-namespace TemplateGenerator.Builder
-{
+namespace TemplateGenerator.Builder;
     /// <summary>
     /// Creates derived <see cref="DescriptionBuilderBase{TNodeType}"/> builders depending
     /// on the <see cref="MetadataTypes"/>-type specified.
@@ -15,6 +14,8 @@ namespace TemplateGenerator.Builder
     /// </remarks>
     public class DescriptionBuilderFactory<TNodeType>
     {
+        private readonly object _buildersLock = new();
+
         /// <summary>
         /// Default constructor - initialize our dictionary for builders.
         /// </summary>
@@ -31,10 +32,7 @@ namespace TemplateGenerator.Builder
         /// <summary>
         /// Gets and sequence of builders.
         /// </summary>
-        public IEnumerable<Type> DefinedBuilders
-        {
-            get { return Builders.Select(x => x.Key); }
-        }
+        public IEnumerable<Type> DefinedBuilders => Builders.Keys;
 
         /// <summary>
         /// Builds an builder.
@@ -42,9 +40,7 @@ namespace TemplateGenerator.Builder
         /// <typeparam name="TBuilder">The type parametized builder.</typeparam>
         /// <returns><see cref="TBuilder"/></returns>
         public TBuilder Build<TBuilder>() where TBuilder : class, new()
-        {
-            return Build<TBuilder>(x => { });
-        }
+            => Build<TBuilder>(_ => { });
 
         /// <summary>
         /// Builds an builder and allows customization of the definition.
@@ -54,10 +50,7 @@ namespace TemplateGenerator.Builder
         /// <returns><see cref="TBuilder"/></returns>
         public TBuilder Build<TBuilder>(Action<TBuilder> customization) where TBuilder : class, new()
         {
-            if (customization == null)
-            {
-                throw new ArgumentNullException(nameof(customization));
-            }
+            ArgumentNullException.ThrowIfNull(customization);
 
             var result = Builders[typeof(TBuilder)]() as TBuilder;
 
@@ -68,7 +61,7 @@ namespace TemplateGenerator.Builder
                 return result;
             }
 
-            return new Func<TBuilder>(() => new TBuilder()).Invoke();
+            return new TBuilder();
         }
 
         /// <summary>
@@ -81,25 +74,24 @@ namespace TemplateGenerator.Builder
         /// <exception cref="ArgumentNullException">Thrown when builder is null.</exception>
         public void Define<TBuilder>(Func<TBuilder> builder)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-            if (Builders.ContainsKey(typeof(TBuilder)))
-            {
-                throw new InvalidOperationException(typeof(TBuilder).Name +
-                                                    " is already registered. You can only register one builder per type.");
-            }
-            if (typeof(TBuilder).BaseType != typeof(DescriptionBuilderBase<TNodeType>))
+            ArgumentNullException.ThrowIfNull(builder);
+
+            if (!typeof(DescriptionBuilderBase<TNodeType>).IsAssignableFrom(typeof(TBuilder)))
             {
                 throw new ArgumentException(
                     "A builder doesn't inherit from '" + typeof(DescriptionBuilderBase<TNodeType>).Name + "'.",
                     nameof(builder));
             }
 
-            lock (Builders)
+            lock (_buildersLock)
             {
-                Builders.Add(typeof(TBuilder), () => builder());
+                if (Builders.ContainsKey(typeof(TBuilder)))
+                {
+                    throw new InvalidOperationException(
+                        typeof(TBuilder).Name + " is already registered. You can only register one builder per type.");
+                }
+
+                Builders.Add(typeof(TBuilder), () => builder() ?? throw new InvalidOperationException("Builder factory returned null."));
             }
         }
 
@@ -108,13 +100,10 @@ namespace TemplateGenerator.Builder
         /// </summary>
         public void Empty()
         {
-            lock (Builders)
+            lock (_buildersLock)
             {
-                if (Builders.Count > 0)
-                {
-                    Builders.Clear();
-                }
+                Builders.Clear();
             }
         }
     }
-}
+ 
