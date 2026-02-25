@@ -1,12 +1,12 @@
 using TemplateGenerator.Description;
 
-namespace TemplateGenerator.Generator
+namespace TemplateGenerator.Generator;
+
+/// <summary>
+/// An interface for creating concrete <see cref="IGenerator"/> implementations.
+/// </summary>
+internal interface IGenerator
 {
-    /// <summary>
-    /// An interface for creating concrete <see cref="IGenerator"/> implementations.
-    /// </summary>
-    internal interface IGenerator
-    {
         /// <summary>
         /// Gets the class template text.
         /// </summary>
@@ -23,5 +23,4 @@ namespace TemplateGenerator.Generator
         /// <param name="description"><see cref="IDescription"/> implementation.</param>
         /// <returns>Generated template text</returns>
         string Generate(IDescription description);
-    }
 }

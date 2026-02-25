@@ -3,16 +3,12 @@ using System.Text;
 using TemplateGenerator.Description;
 using TemplateGenerator.Template;
 
-namespace TemplateGenerator.Generator
-{
+namespace TemplateGenerator.Generator;
     internal class ClassGenerator : IGenerator
     {
         public ClassGenerator(TemplateBase template)
         {
-            if (template == null)
-            {
-                throw new ArgumentNullException(nameof(template));
-            }
+            ArgumentNullException.ThrowIfNull(template);
 
             GeneratedTemplate = template;
             ClassTemplate = GeneratedTemplate.ClassTemplate;
@@ -50,10 +46,7 @@ namespace TemplateGenerator.Generator
         /// <returns>Generated template text</returns>
         public string Generate(IDescription description)
         {
-            if (description == null)
-            {
-                throw new ArgumentNullException(nameof(description));
-            }
+            ArgumentNullException.ThrowIfNull(description);
 
             var classTemplateString = ClassTemplate;
 
@@ -61,8 +54,7 @@ namespace TemplateGenerator.Generator
             classTemplateString = classTemplateString.Replace(MetadataParameters.DescriptionName,
                                                               description.Description);
 
-            var classDescription = description as ClassDescription;
-            if (classDescription != null)
+            if (description is ClassDescription classDescription)
             {
                 if (classDescription.IsDataAccessClass)
                 {
@@ -91,10 +83,7 @@ namespace TemplateGenerator.Generator
 
         private StringBuilder CreateColumnNameParameters(ClassDescription description)
         {
-            if (description == null)
-            {
-                throw new ArgumentNullException(nameof(description));
-            }
+            ArgumentNullException.ThrowIfNull(description);
 
             var parameters = new StringBuilder();
 
@@ -110,10 +99,7 @@ namespace TemplateGenerator.Generator
 
         private StringBuilder CreateParameters(ClassDescription description)
         {
-            if (description == null)
-            {
-                throw new ArgumentNullException(nameof(description));
-            }
+            ArgumentNullException.ThrowIfNull(description);
 
             var parameters = new StringBuilder();
 
@@ -124,15 +110,8 @@ namespace TemplateGenerator.Generator
                 switch (DescriptionTypes)
                 {
                     case TemplateDescriptionTypes.Controller:
-                        {
-                            parameterString =
-                                parameterString.Replace(MetadataParameters.ParameterName,
-                                                        string.Concat(parameterName.Substring(0, 1).ToUpperInvariant(),
-                                                                      parameterName.Substring(1,
-                                                                                              parameterName.Length - 1).
-                                                                          ToUpperInvariant()));
-                            parameterString = parameterString.Replace(MetadataParameters.ClassName, description.Name);
-                        }
+                        parameterString = parameterString.Replace(MetadataParameters.ParameterName, ToUpperLeadingAndTail(parameterName));
+                        parameterString = parameterString.Replace(MetadataParameters.ClassName, description.Name);
                         break;
                     default:
                         parameterString = parameterString.Replace(MetadataParameters.ParameterName, parameterName);
@@ -147,10 +126,7 @@ namespace TemplateGenerator.Generator
 
         private StringBuilder CreateProperties(ClassDescription description)
         {
-            if (description == null)
-            {
-                throw new ArgumentNullException(nameof(description));
-            }
+            ArgumentNullException.ThrowIfNull(description);
 
             var properties = new StringBuilder();
 
@@ -175,27 +151,27 @@ namespace TemplateGenerator.Generator
         private static string GetParameterString(IDescription description, string parameterString,
                                                  string parametriNimi)
         {
-            if (description == null)
-            {
-                throw new ArgumentNullException(nameof(description));
-            }
+            ArgumentNullException.ThrowIfNull(description);
 
             parameterString =
                 parameterString.Replace("@sovitusParametri1@",
-                                        string.Concat(
-                                            parametriNimi.Substring(0, 1).ToUpperInvariant(),
-                                            parametriNimi.Substring(1, parametriNimi.Length - 1).ToUpperInvariant()));
+                                        ToUpperLeadingAndTail(parametriNimi));
             parameterString =
                 parameterString.Replace("@sovitusParametri2@",
-                                        string.Concat(
-                                            parametriNimi.Substring(0, 1).ToUpperInvariant(),
-                                            parametriNimi.Substring(1, parametriNimi.Length - 1).ToUpperInvariant()));
+                                        ToUpperLeadingAndTail(parametriNimi));
 
             parameterString = parameterString.Replace(MetadataParameters.ClassName, description.Name);
 
             return parameterString;
         }
 
+        private static string ToUpperLeadingAndTail(string value)
+        {
+            return string.Concat(
+                value.Substring(0, 1).ToUpperInvariant(),
+                value.Substring(1, value.Length - 1).ToUpperInvariant());
+        }
+
         #endregion
     }
-}
+ 

@@ -1,104 +1,79 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace TemplateGenerator.Description
+namespace TemplateGenerator.Description;
+
+/// <summary>
+/// Represents a description of an XML file (or element).
+/// </summary>
+[Serializable]
+public class XmlDescription : IDescription
 {
-    /// <summary>
-    /// Represents an description of a XML-file (or element).
-    /// </summary>
-    [Serializable]
-    public class XmlDescription : IDescription
+    public XmlDescription(
+        string xmlName,
+        string xmlDescription,
+        IEnumerable<IPropertyDescription> properties,
+        string? tableName = null,
+        string? xmlNamespace = null,
+        string? fileFullPath = null)
     {
-        /// <summary>
-        /// Default constructor ; initialized new description.
-        /// </summary>
-        /// <param name="xmlName">Name of the template description</param>
-        /// <param name="xmlDescription">Template</param>
-        /// <param name="properties">Template properties</param>
-        /// <exception cref="ArgumentNullException">Thrown when one of the constructor parameter's is null.</exception>
-        public XmlDescription(string xmlName, string xmlDescription, IEnumerable<IPropertyDescription> properties)
-        {
-            if (xmlName == null)
-            {
-                throw new ArgumentNullException(nameof(xmlName));
-            }
-            if (xmlDescription == null)
-            {
-                throw new ArgumentNullException(nameof(xmlDescription));
-            }
-            if (properties == null)
-            {
-                throw new ArgumentNullException(nameof(properties));
-            }
+        ArgumentNullException.ThrowIfNull(xmlName);
+        ArgumentNullException.ThrowIfNull(xmlDescription);
+        ArgumentNullException.ThrowIfNull(properties);
 
-            Name = xmlName;
-            Description = xmlDescription;
-            Properties = new ReadOnlyCollection<IPropertyDescription>(properties.ToList());
-        }
-
-        #region Implementation of IDescription
-
-        /// <summary>
-        /// Gets or sets the template file's used data storage's table or collection name.
-        /// </summary>
-        public string TableName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template file's name (usually a class or XM-element name etc.).
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template file's description (or summary for XML-documentation).
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template file's full path.
-        /// </summary>
-        public string FileFullPath { get; set; }
-
-        /// <summary>
-        /// Gets an read-only collection of template's defined property descriptions.
-        /// </summary>
-        public ReadOnlyCollection<IPropertyDescription> Properties { get; }
-
-        #endregion
-
-        public string Namespace { get; set; }
-
-        #region Implementation of IComparable<in IDescription>
-
-        /// <summary>
-        /// Compares the current object with another object of the same type.
-        /// </summary>
-        /// <returns>
-        /// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>. 
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public int CompareTo(IDescription other)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region Implementation of IEquatable<IDescription>
-
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <returns>
-        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public bool Equals(IDescription other)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
+        Name = xmlName;
+        Description = xmlDescription;
+        Properties = properties.ToArray();
+        TableName = tableName;
+        Namespace = xmlNamespace;
+        FileFullPath = fileFullPath;
     }
+
+    /// <summary>
+    /// Gets or sets the template file's used data storage's table or collection name.
+    /// </summary>
+    public string? TableName { get; }
+
+    /// <summary>
+    /// Gets the template file's name (usually a class or XML-element name etc.).
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
+    /// Gets the template file's description (or summary for XML-documentation).
+    /// </summary>
+    public string Description { get; }
+
+    /// <summary>
+    /// Gets or sets the template file's full path.
+    /// </summary>
+    public string? FileFullPath { get; }
+
+    /// <summary>
+    /// Gets a read-only collection of template-defined property descriptions.
+    /// </summary>
+    public IReadOnlyList<IPropertyDescription> Properties { get; }
+
+    public string? Namespace { get; }
+
+    public int CompareTo(IDescription? other)
+    {
+        if (other is null)
+        {
+            return 1;
+        }
+
+        return StringComparer.Ordinal.Compare(Name, other.Name);
+    }
+
+    public bool Equals(IDescription? other)
+    {
+        return other is XmlDescription xmlDescription &&
+               StringComparer.Ordinal.Equals(Name, xmlDescription.Name);
+    }
+
+    public override bool Equals(object? obj) => obj is IDescription other && Equals(other);
+
+    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Name);
 }

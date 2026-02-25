@@ -1,13 +1,13 @@
+using System;
 using System.Collections.Generic;
 
-namespace TemplateGenerator.Template
-{
+namespace TemplateGenerator.Template;
     /// <summary>
     /// A simple container for templates.
     /// </summary>
-    internal class TemplateStorage
+    internal sealed class TemplateStorage
     {
-        private static TemplateStorage _instance;
+        private static readonly Lazy<TemplateStorage> InstanceFactory = new(() => new TemplateStorage());
 
         /// <summary>
         /// Default constructor ; initialize new dictionary for holding templates.
@@ -25,11 +25,11 @@ namespace TemplateGenerator.Template
         /// <summary>
         /// Gets an "singleton" instance of <see cref="TemplateStorage"/>.
         /// </summary>
-        public static TemplateStorage Instance => _instance ?? (_instance = new TemplateStorage());
+        public static TemplateStorage Instance => InstanceFactory.Value;
 
         /// <summary>
         /// Gets the dictionary of templates.
         /// </summary>
         public IDictionary<string, TemplateBase> Templates => Storage;
     }
-}
+ 

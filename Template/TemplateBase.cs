@@ -1,14 +1,14 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace TemplateGenerator.Template
+namespace TemplateGenerator.Template;
+
+/// <summary>
+/// A base class for derived concrete template implementations.
+/// </summary>
+[Serializable]
+public abstract class TemplateBase
 {
-    /// <summary>
-    /// An base class for derived concrete template implementations.
-    /// </summary>
-    [Serializable]
-    public abstract class TemplateBase
-    {
         /// <summary>
         ///  Gets the name of the template.
         ///  </summary>
@@ -43,5 +43,4 @@ namespace TemplateGenerator.Template
         ///  </summary>
         [Required, DataType(DataType.Text)]
         public abstract string SovitusParameterTemplate { get; }
-    }
 }

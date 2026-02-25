@@ -1,26 +1,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TemplateGenerator;
 using TemplateGenerator.Builder;
 using TemplateGenerator.Description;
 using TemplateGenerator.Template;
 
-namespace TemplateGenerator.Generator
-{
+namespace TemplateGenerator.Generator;
     /// <summary>
     /// Represents a generators and builders for creating templates and descriptions.
     /// </summary>
     public class GeneratorController
     {
-        private IDictionary<string, IDescription> _descriptions;
+        private IDictionary<string, IDescription>? _descriptions;
+        private readonly string _templateDirectory;
+        private readonly object _descriptionsLock = new();
+
+        public GeneratorController()
+            : this(new TemplateGeneratorOptions())
+        {
+        }
+
+        public GeneratorController(TemplateGeneratorOptions options)
+        {
+            options ??= new TemplateGeneratorOptions();
+
+            if (string.IsNullOrWhiteSpace(options.TemplateDirectory))
+            {
+                throw new ArgumentException("Template directory must be a non-empty path.", nameof(options));
+            }
+
+            _templateDirectory = options.TemplateDirectory;
+        }
 
         /// <summary>
         /// Gets an list of available <see cref="IDescription"/> implementations.
         /// </summary>
         public IList<IDescription> Descriptions
-        {
-            get { lock (TemplateNamesDescriptions) { return new List<IDescription>(TemplateNamesDescriptions.Values);} }
-        }
+            => [..TemplateNamesDescriptions.Values];
 
         /// <summary>
         /// Gets an list of available template implementations (derived from <see cref="TemplateBase"/>).
@@ -36,23 +53,25 @@ namespace TemplateGenerator.Generator
             {
                 if (_descriptions == null)
                 {
-                    lock (this)
+                    lock (_descriptionsLock)
                     {
-                        // TODO: ioc / autodiscovery / reflect every builder available on the assembly
-                        var buildDescriptions = new List<IDictionary<string, IDescription>>
-                                                {
-                                                    new ClassDescriptionBuilder().BuiltTemplates,
-                                                    new XmlDescriptionBuilder().BuiltTemplates
-                                                };
+                        if (_descriptions == null)
+                        {
+                            // TODO: ioc / autodiscovery / reflect every builder available on the assembly
+                            var buildDescriptions = new List<IDictionary<string, IDescription>>
+                            {
+                                new ClassDescriptionBuilder(_templateDirectory).BuiltTemplates,
+                                new XmlDescriptionBuilder(_templateDirectory).BuiltTemplates
+                            };
 
-                        _descriptions =
-                            buildDescriptions
+                            _descriptions = buildDescriptions
                                 .SelectMany(descriptions => descriptions)
-                                .ToDictionary(descriptionPair => descriptionPair.Key, pair => pair.Value); 
+                                .ToDictionary(descriptionPair => descriptionPair.Key, pair => pair.Value);
+                        }
                     }
                 }
 
-                return _descriptions;
+                return _descriptions!;
             }
         }
 
@@ -65,19 +84,14 @@ namespace TemplateGenerator.Generator
         /// Thrown when derived <see cref="IDescription"/> interface implementation is null or template name wasn't given.
         /// </exception>
         /// <returns>Generated template's description (a class, interface, XML-file etc.) or null.</returns>
-        public static string GenerateDescription(IDescription description, string templateName)
+        public static string? GenerateDescription(IDescription description, string templateName)
         {
-            if (description == null)
-            {
-                throw new ArgumentNullException(nameof(description));
-            }
-            if (templateName == null)
-            {
-                throw new ArgumentNullException(nameof(templateName));
-            }
+            ArgumentNullException.ThrowIfNull(description);
+            ArgumentNullException.ThrowIfNull(templateName);
 
-            TemplateBase template;
-            return TemplateStorage.Instance.Templates.TryGetValue(templateName, out template) ? new ClassGenerator(template).Generate(description) : null;
+            return TemplateStorage.Instance.Templates.TryGetValue(templateName, out var template)
+                ? new ClassGenerator(template).Generate(description)
+                : null;
         }
     }
-}
+ 
