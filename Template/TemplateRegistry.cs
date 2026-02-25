@@ -11,7 +11,13 @@ public sealed class TemplateRegistry : ITemplateRegistry
 {
     private readonly object _lock = new();
     private readonly Dictionary<string, TemplateAsset> _templates = new(StringComparer.Ordinal);
+    private TemplateAsset[]? _assetsSnapshot;
+    private TemplateAssetDescriptor[]? _descriptorSnapshot;
 
+    /// <summary>
+    /// Shared process-wide registry used by legacy static APIs. Prefer injecting an
+    /// <see cref="ITemplateRegistry"/> into <c>GeneratorController</c> for isolation.
+    /// </summary>
     public static TemplateRegistry Default { get; } = new();
 
     public IReadOnlyList<TemplateAssetDescriptor> Descriptors
@@ -20,9 +26,12 @@ public sealed class TemplateRegistry : ITemplateRegistry
         {
             lock (_lock)
             {
-                return _templates.Count == 0
-                    ? Array.Empty<TemplateAssetDescriptor>()
-                    : [.. _templates.Values.Select(static asset => asset.Descriptor)];
+                if (_templates.Count == 0)
+                {
+                    return Array.Empty<TemplateAssetDescriptor>();
+                }
+
+                return _descriptorSnapshot ??= BuildDescriptorSnapshot();
             }
         }
     }
@@ -33,7 +42,12 @@ public sealed class TemplateRegistry : ITemplateRegistry
         {
             lock (_lock)
             {
-                return _templates.Count == 0 ? Array.Empty<TemplateAsset>() : [.. _templates.Values];
+                if (_templates.Count == 0)
+                {
+                    return Array.Empty<TemplateAsset>();
+                }
+
+                return _assetsSnapshot ??= BuildAssetSnapshot();
             }
         }
     }
@@ -72,6 +86,7 @@ public sealed class TemplateRegistry : ITemplateRegistry
             }
 
             _templates.Add(templateAsset.Name, templateAsset);
+            InvalidateSnapshots();
         }
     }
 
@@ -118,6 +133,8 @@ public sealed class TemplateRegistry : ITemplateRegistry
             {
                 _templates.Add(asset.Name, asset);
             }
+
+            InvalidateSnapshots();
         }
     }
 
@@ -127,7 +144,13 @@ public sealed class TemplateRegistry : ITemplateRegistry
 
         lock (_lock)
         {
-            return _templates.Remove(templateName);
+            var removed = _templates.Remove(templateName);
+            if (removed)
+            {
+                InvalidateSnapshots();
+            }
+
+            return removed;
         }
     }
 
@@ -135,7 +158,25 @@ public sealed class TemplateRegistry : ITemplateRegistry
     {
         lock (_lock)
         {
+            if (_templates.Count == 0)
+            {
+                return;
+            }
+
             _templates.Clear();
+            InvalidateSnapshots();
         }
+    }
+
+    private TemplateAsset[] BuildAssetSnapshot()
+        => [.. _templates.Values];
+
+    private TemplateAssetDescriptor[] BuildDescriptorSnapshot()
+        => [.. _templates.Values.Select(static asset => asset.Descriptor)];
+
+    private void InvalidateSnapshots()
+    {
+        _assetsSnapshot = null;
+        _descriptorSnapshot = null;
     }
 }

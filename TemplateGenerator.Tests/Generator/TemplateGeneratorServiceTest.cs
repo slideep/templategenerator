@@ -40,6 +40,8 @@ public class TemplateGeneratorServiceTest
         Assert.Contains("class Airport", result, StringComparison.Ordinal);
         Assert.Contains("public string Code", result, StringComparison.Ordinal);
         Assert.DoesNotContain(MetadataParameters.ClassName, result, StringComparison.Ordinal);
+        Assert.DoesNotContain(MetadataParameters.ParametersName, result, StringComparison.Ordinal);
+        Assert.DoesNotContain(MetadataParameters.SovitusParametriName, result, StringComparison.Ordinal);
     }
 
     [Fact]

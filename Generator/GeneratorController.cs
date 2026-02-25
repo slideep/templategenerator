@@ -51,8 +51,16 @@ namespace TemplateGenerator.Generator;
         /// <summary>
         /// Gets an list of available template assets from the default registry.
         /// </summary>
+        /// <remarks>
+        /// This uses the shared default registry. Prefer instance usage with an injected
+        /// <see cref="ITemplateRegistry"/> in tests and concurrent scenarios.
+        /// </remarks>
         public static IList<TemplateAsset> Templates => [.. TemplateRegistry.Default.Assets];
 
+        /// <summary>
+        /// Gets template descriptors from the shared default registry used by legacy static APIs.
+        /// Prefer instance usage with an injected <see cref="ITemplateRegistry"/> for isolation.
+        /// </summary>
         public static IList<TemplateAssetDescriptor> TemplateDescriptors => [.. TemplateRegistry.Default.Descriptors];
 
         public ITemplateRegistry RegisteredTemplateRegistry => _templateRegistry;
@@ -102,12 +110,23 @@ namespace TemplateGenerator.Generator;
         public string? Generate(IDescription description, string templateName)
             => _templateGeneratorService.GenerateDescription(description, templateName);
 
+        /// <summary>
+        /// Registers a template into the shared default registry used by legacy static APIs.
+        /// Prefer injecting a registry and calling instance methods in tests and concurrent scenarios.
+        /// </summary>
         public static void RegisterTemplate(TemplateAsset template)
             => TemplateRegistry.Default.Register(template);
 
+        /// <summary>
+        /// Loads templates into the shared default registry used by legacy static APIs.
+        /// Prefer injecting a registry and calling instance methods in tests and concurrent scenarios.
+        /// </summary>
         public static void LoadTemplates(ITemplateAssetProvider provider)
             => TemplateRegistry.Default.LoadFrom(provider);
 
+        /// <summary>
+        /// Clears the shared default registry used by legacy static APIs.
+        /// </summary>
         public static void ClearTemplates()
             => TemplateRegistry.Default.Clear();
     }

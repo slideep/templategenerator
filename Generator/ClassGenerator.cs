@@ -73,11 +73,12 @@ namespace TemplateGenerator.Generator;
 
                 classTemplateString = classTemplateString.Replace(MetadataParameters.PropertiesName,
                                                                   CreateProperties(classDescription).ToString());
-                classTemplateString = classTemplateString.Replace(MetadataParameters.SovitusParametriName,
-                                                                  CreateColumnNameParameters(classDescription).ToString());
+                classTemplateString = classTemplateString.Replace(
+                    MetadataParameters.SovitusParametriName,
+                    CreateColumnNameParameters(classDescription).ToString());
             }
 
-            return classTemplateString;
+            return ClearOptionalClassPlaceholders(classTemplateString);
         }
 
         #endregion
@@ -172,7 +173,7 @@ namespace TemplateGenerator.Generator;
 
             return value.Length == 1
                 ? value.ToUpperInvariant()
-                : string.Concat(value[0].ToString().ToUpperInvariant(), value.AsSpan(1));
+                : string.Concat(value[0].ToString().ToUpperInvariant(), value.Substring(1));
         }
 
         private static string[] GetColumnNames(ClassDescription description)
@@ -194,6 +195,7 @@ namespace TemplateGenerator.Generator;
                 return string.Empty;
             }
 
+            EnsureSqlIdentifier(tableName, nameof(description.TableName));
             var columns = JoinColumnsOrWildcard(description);
             return $"\"SELECT {columns} FROM {tableName}\"";
         }
@@ -212,6 +214,8 @@ namespace TemplateGenerator.Generator;
                 return string.Empty;
             }
 
+            EnsureSqlIdentifier(tableName, nameof(description.TableName));
+            EnsureSqlIdentifiers(columnNames, "Properties");
             var columns = string.Join(",", columnNames);
             var parameters = string.Join(",", columnNames.Select(static name => $":{name}"));
             return $"\"INSERT INTO {tableName} ({columns}) VALUES ({parameters})\"";
@@ -231,6 +235,8 @@ namespace TemplateGenerator.Generator;
                 return string.Empty;
             }
 
+            EnsureSqlIdentifier(tableName, nameof(description.TableName));
+            EnsureSqlIdentifiers(columnNames, "Properties");
             var assignments = string.Join(",", columnNames.Select(static name => $"{name} = :{name}"));
             return $"\"UPDATE {tableName} SET {assignments}\"";
         }
@@ -238,7 +244,67 @@ namespace TemplateGenerator.Generator;
         private static string JoinColumnsOrWildcard(ClassDescription description)
         {
             var columnNames = GetColumnNames(description);
+            EnsureSqlIdentifiers(columnNames, "Properties");
             return columnNames.Length == 0 ? "*" : string.Join(",", columnNames);
+        }
+
+        private static void EnsureSqlIdentifiers(string[] identifiers, string parameterName)
+        {
+            foreach (var identifier in identifiers)
+            {
+                EnsureSqlIdentifier(identifier, parameterName);
+            }
+        }
+
+        private static void EnsureSqlIdentifier(string identifier, string parameterName)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(identifier);
+
+            foreach (var segment in identifier.Split('.'))
+            {
+                if (!IsValidSqlIdentifierSegment(segment))
+                {
+                    throw new InvalidOperationException(
+                        $"Invalid SQL identifier '{identifier}' in '{parameterName}'. Expected alphanumeric/underscore segments.");
+                }
+            }
+        }
+
+        private static bool IsValidSqlIdentifierSegment(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+
+            if (!(char.IsLetter(value[0]) || value[0] == '_'))
+            {
+                return false;
+            }
+
+            for (var i = 1; i < value.Length; i++)
+            {
+                var character = value[i];
+                if (!(char.IsLetterOrDigit(character) || character == '_'))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static string ClearOptionalClassPlaceholders(string value)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            return value
+                .Replace(MetadataParameters.TableNameName, string.Empty)
+                .Replace(MetadataParameters.SelectSqlName, string.Empty)
+                .Replace(MetadataParameters.InsertSqlName, string.Empty)
+                .Replace(MetadataParameters.UpdateSqlName, string.Empty)
+                .Replace(MetadataParameters.ParametersName, string.Empty)
+                .Replace(MetadataParameters.SovitusParametriName, string.Empty);
         }
 
         #endregion

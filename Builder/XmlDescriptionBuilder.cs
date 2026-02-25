@@ -95,6 +95,9 @@ namespace TemplateGenerator.Builder;
 
             foreach (var propertyNode in propertyNodes)
             {
+                // Non-element property descriptions (for example, Attributes) are intentionally
+                // skipped. The legacy TakeWhile(HasElement) behavior truncated parsing at the
+                // first non-element node and dropped valid later elements.
                 if (!HasElement(propertyNode))
                 {
                     continue;
