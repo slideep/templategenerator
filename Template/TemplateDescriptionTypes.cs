@@ -42,5 +42,5 @@ public enum TemplateDescriptionTypes
     /// <summary>
     /// Everything (generate or template every layer's class with their interfaces).
     /// </summary>
-    Everything = DataAccess & Controller & ControllerInterface & Constant & Entity
+    Everything = DataAccess | Controller | ControllerInterface | Constant | Entity
 }

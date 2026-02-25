@@ -27,7 +27,7 @@ namespace TemplateGenerator.Generator;
 
             if (string.IsNullOrWhiteSpace(options.TemplateDirectory))
             {
-                throw new ArgumentException("Template directory must be a non-empty path.", nameof(options));
+                throw new ArgumentException("Template directory must be a non-empty path.", nameof(options.TemplateDirectory));
             }
 
             _templateDirectory = options.TemplateDirectory;
@@ -51,27 +51,24 @@ namespace TemplateGenerator.Generator;
         {
             get
             {
-                if (_descriptions == null)
+                lock (_descriptionsLock)
                 {
-                    lock (_descriptionsLock)
+                    if (_descriptions == null)
                     {
-                        if (_descriptions == null)
+                        // TODO: ioc / autodiscovery / reflect every builder available on the assembly
+                        var buildDescriptions = new List<IDictionary<string, IDescription>>
                         {
-                            // TODO: ioc / autodiscovery / reflect every builder available on the assembly
-                            var buildDescriptions = new List<IDictionary<string, IDescription>>
-                            {
-                                new ClassDescriptionBuilder(_templateDirectory).BuiltTemplates,
-                                new XmlDescriptionBuilder(_templateDirectory).BuiltTemplates
-                            };
+                            new ClassDescriptionBuilder(_templateDirectory).BuiltTemplates,
+                            new XmlDescriptionBuilder(_templateDirectory).BuiltTemplates
+                        };
 
-                            _descriptions = buildDescriptions
-                                .SelectMany(descriptions => descriptions)
-                                .ToDictionary(descriptionPair => descriptionPair.Key, pair => pair.Value);
-                        }
+                        _descriptions = buildDescriptions
+                            .SelectMany(descriptions => descriptions)
+                            .ToDictionary(descriptionPair => descriptionPair.Key, pair => pair.Value);
                     }
-                }
 
-                return _descriptions!;
+                    return _descriptions;
+                }
             }
         }
 

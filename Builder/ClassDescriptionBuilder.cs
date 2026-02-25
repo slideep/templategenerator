@@ -39,7 +39,12 @@ public class ClassDescriptionBuilder : DescriptionBuilderBase<XElement>
         var xmlDocument = XDocument.Load(reader);
         var meta = new TemplateMetadata(xmlDocument);
 
-        if (meta.Node == null || meta.MetadataType != MetadataTypes.Class)
+        if (meta.Node == null)
+        {
+            throw TemplateParseException.MissingRootNode();
+        }
+
+        if (meta.MetadataType != MetadataTypes.Class)
         {
             return null;
         }

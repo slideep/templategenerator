@@ -24,7 +24,7 @@ internal class TemplateMetadata
     }
 
     /// <summary>
-    /// Gets or sets the root node of template's description.
+    /// Gets the root node of template's description.
     /// </summary>
     public XElement? Node { get; }
 

@@ -76,11 +76,6 @@ namespace TemplateGenerator.Builder;
         {
             ArgumentNullException.ThrowIfNull(builder);
 
-            if (Builders.ContainsKey(typeof(TBuilder)))
-            {
-                throw new InvalidOperationException(
-                    typeof(TBuilder).Name + " is already registered. You can only register one builder per type.");
-            }
             if (!typeof(DescriptionBuilderBase<TNodeType>).IsAssignableFrom(typeof(TBuilder)))
             {
                 throw new ArgumentException(
@@ -90,6 +85,12 @@ namespace TemplateGenerator.Builder;
 
             lock (_buildersLock)
             {
+                if (Builders.ContainsKey(typeof(TBuilder)))
+                {
+                    throw new InvalidOperationException(
+                        typeof(TBuilder).Name + " is already registered. You can only register one builder per type.");
+                }
+
                 Builders.Add(typeof(TBuilder), () => builder() ?? throw new InvalidOperationException("Builder factory returned null."));
             }
         }

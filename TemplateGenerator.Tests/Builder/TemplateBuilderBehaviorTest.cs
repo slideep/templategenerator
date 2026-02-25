@@ -84,6 +84,37 @@ public class TemplateBuilderBehaviorTest
     }
 
     [Fact]
+    public void ClassDescriptionBuilderThrowsStructuredErrorWhenClassNodeIsMissing()
+    {
+        var tempDirectory = CreateTempDirectory();
+
+        try
+        {
+            var templatePath = Path.Combine(tempDirectory, "MissingClassNode.xml");
+            File.WriteAllText(
+                templatePath,
+                """
+                <?xml version="1.0" encoding="utf-8"?>
+                <classTemplate version="0.1">
+                  <notClass />
+                </classTemplate>
+                """);
+
+            var builder = new ClassDescriptionBuilder(tempDirectory);
+
+            var exception = Assert.Throws<TemplateParseException>(() => _ = builder.BuiltTemplates);
+
+            Assert.Equal(TemplateParseErrorCode.MissingRootNode, exception.ErrorCode);
+            Assert.Null(exception.PropertyName);
+            Assert.Equal(templatePath, exception.FileFullPath);
+        }
+        finally
+        {
+            Directory.Delete(tempDirectory, true);
+        }
+    }
+
+    [Fact]
     public void ClassDescriptionBuilderThrowsStructuredErrorWhenPropertyValueAttributeIsMissing()
     {
         var tempDirectory = CreateTempDirectory();
@@ -107,6 +138,17 @@ public class TemplateBuilderBehaviorTest
         {
             Directory.Delete(tempDirectory, true);
         }
+    }
+
+    [Fact]
+    public void TemplateDescriptionTypesEverythingCombinesAllFlags()
+    {
+        Assert.NotEqual(TemplateDescriptionTypes.None, TemplateDescriptionTypes.Everything);
+        Assert.True(TemplateDescriptionTypes.Everything.HasFlag(TemplateDescriptionTypes.Entity));
+        Assert.True(TemplateDescriptionTypes.Everything.HasFlag(TemplateDescriptionTypes.Constant));
+        Assert.True(TemplateDescriptionTypes.Everything.HasFlag(TemplateDescriptionTypes.Controller));
+        Assert.True(TemplateDescriptionTypes.Everything.HasFlag(TemplateDescriptionTypes.ControllerInterface));
+        Assert.True(TemplateDescriptionTypes.Everything.HasFlag(TemplateDescriptionTypes.DataAccess));
     }
 
     [Fact]
