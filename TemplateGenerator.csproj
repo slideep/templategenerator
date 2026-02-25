@@ -15,4 +15,8 @@
     <Content Remove="TemplateGenerator.Tests\**\*" />
     <EmbeddedResource Remove="TemplateGenerator.Tests\**\*" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="TemplatePacks/Sample/**/*.template.json" />
+  </ItemGroup>
 </Project>

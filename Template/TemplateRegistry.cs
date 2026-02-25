@@ -79,9 +79,45 @@ public sealed class TemplateRegistry : ITemplateRegistry
     {
         ArgumentNullException.ThrowIfNull(provider);
 
-        foreach (var asset in provider.GetAssets())
+        var loadedAssets = new List<TemplateAsset>();
+        var loadedNames = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var descriptor in provider.GetDescriptors())
         {
-            Register(asset);
+            var asset = provider.LoadAsset(descriptor);
+
+            if (string.IsNullOrWhiteSpace(asset.Name))
+            {
+                throw new ArgumentException("Template name must be a non-empty value.", nameof(provider));
+            }
+
+            if (!loadedNames.Add(asset.Name))
+            {
+                throw new InvalidOperationException($"Template '{asset.Name}' is already registered.");
+            }
+
+            loadedAssets.Add(asset);
+        }
+
+        if (loadedAssets.Count == 0)
+        {
+            return;
+        }
+
+        lock (_lock)
+        {
+            foreach (var asset in loadedAssets)
+            {
+                if (_templates.ContainsKey(asset.Name))
+                {
+                    throw new InvalidOperationException($"Template '{asset.Name}' is already registered.");
+                }
+            }
+
+            foreach (var asset in loadedAssets)
+            {
+                _templates.Add(asset.Name, asset);
+            }
         }
     }
 

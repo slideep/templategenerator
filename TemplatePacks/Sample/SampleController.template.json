@@ -1,0 +1,8 @@
+{
+  "name": "SampleController",
+  "descriptionType": "Controller",
+  "classTemplate": "public partial class @class@Controller\\n{\\n// @description@\\n@properties@\\n@parameters@\\n}\\n",
+  "propertyTemplate": "public @datatype@ @name@ { get; set; }\\n",
+  "parameterTemplate": "string @parameterName@,\\n",
+  "sovitusParameterTemplate": "map.@sovitusParametri1@ = source.@sovitusParametri2@;\\n"
+}

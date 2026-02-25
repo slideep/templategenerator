@@ -7,7 +7,7 @@ namespace TemplateGenerator.Template;
 /// </summary>
 public interface ITemplateAssetProvider
 {
-    IReadOnlyList<TemplateAssetDescriptor> GetDescriptors();
+    IEnumerable<TemplateAssetDescriptor> GetDescriptors();
 
-    IReadOnlyList<TemplateAsset> GetAssets();
+    TemplateAsset LoadAsset(TemplateAssetDescriptor descriptor);
 }

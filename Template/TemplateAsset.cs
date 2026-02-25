@@ -22,13 +22,17 @@ public sealed record TemplateAsset
         ArgumentNullException.ThrowIfNull(parameterTemplate);
         ArgumentNullException.ThrowIfNull(sovitusParameterTemplate);
 
+        var normalizedDescriptor = descriptor is null
+            ? new TemplateAssetDescriptor(name, TemplateAssetSourceKind.InMemory, name)
+            : NormalizeDescriptorName(descriptor, name);
+
         Name = name;
         DescriptionType = descriptionType;
         ClassTemplate = classTemplate;
         PropertyTemplate = propertyTemplate;
         ParameterTemplate = parameterTemplate;
         SovitusParameterTemplate = sovitusParameterTemplate;
-        Descriptor = descriptor ?? new TemplateAssetDescriptor(name, TemplateAssetSourceKind.InMemory, name);
+        Descriptor = normalizedDescriptor;
     }
 
     public string Name { get; init; }
@@ -44,4 +48,14 @@ public sealed record TemplateAsset
     public string SovitusParameterTemplate { get; init; }
 
     public TemplateAssetDescriptor Descriptor { get; init; }
+
+    private static TemplateAssetDescriptor NormalizeDescriptorName(TemplateAssetDescriptor descriptor, string name)
+    {
+        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+        return string.Equals(descriptor.Name, name, StringComparison.Ordinal)
+            ? descriptor
+            : descriptor with { Name = name };
+    }
 }
