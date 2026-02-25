@@ -50,7 +50,7 @@ namespace TemplateGenerator.Builder;
 
             if (meta.Node == null)
             {
-                return null;
+                throw TemplateParseException.MissingRootNode();
             }
 
             if (meta.MetadataType != MetadataTypes.Xml)
@@ -93,14 +93,17 @@ namespace TemplateGenerator.Builder;
                 return Enumerable.Empty<PropertyDescription>();
             }
 
-            foreach (var propertyNode in propertyNodes.TakeWhile(HasElement))
+            foreach (var propertyNode in propertyNodes)
             {
-                var elementName = TemplateMetadata.SearchProperty(propertyNode, MetadataParameters.Name);
-
-                if (elementName == null)
+                // Non-element property descriptions (for example, Attributes) are intentionally
+                // skipped. The legacy TakeWhile(HasElement) behavior truncated parsing at the
+                // first non-element node and dropped valid later elements.
+                if (!HasElement(propertyNode))
                 {
                     continue;
                 }
+
+                var elementName = TemplateMetadata.SearchProperty(propertyNode, MetadataParameters.Name);
 
                 var description = new PropertyDescription(elementName, string.Empty, string.Empty);
 

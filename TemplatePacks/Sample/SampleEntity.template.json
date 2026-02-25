@@ -1,0 +1,8 @@
+{
+  "name": "SampleEntity",
+  "descriptionType": "Entity",
+  "classTemplate": "public class @class@\\n{\\n// @description@\\n@properties@\\n}\\n",
+  "propertyTemplate": "public @datatype@ @name@ { get; set; } // @description@\\n",
+  "parameterTemplate": "",
+  "sovitusParameterTemplate": ""
+}

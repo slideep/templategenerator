@@ -15,7 +15,7 @@ internal class GeneratorParameters : IEquatable<GeneratorParameters>
 
     public string? ParameterTemplate { get; set; }
 
-    public TemplateBase? GeneroitavaKuvausTyyppiPohja { get; set; }
+    public TemplateAsset? GeneroitavaKuvausTyyppiPohja { get; set; }
 
         #region IEquatable<GeneratorParameters> Members
 
